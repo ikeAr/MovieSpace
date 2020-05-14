@@ -75,7 +75,7 @@ export default {
     let userId = this.$route.query.id;
     console.log(this.$route.query.id);
     console.log(userId);
-    if (userId) {
+    if (userId && sessionStorage.getItem("token")) {
       this.$http
         .post("http://localhost:3000/showUser", { user_id: userId })
         .then(data => {
@@ -92,7 +92,8 @@ export default {
           console.log(data.body.data);
         });
     } else {
-      alert("用户信息错误");
+      alert("用户信息错误，请重新登陆");
+      this.$router.push({ path: "loginPage" });
     }
   },
   methods: {
@@ -119,8 +120,11 @@ export default {
         });
     },
     LogOut(event) {
-      sessionStorage.clear();
-      this.$router.push({ path: "loginPage" });
+      const $result = confirm("您确定要退出么");
+      if ($result) {
+        sessionStorage.clear();
+        this.$router.push({ path: "loginPage" });
+      }
     }
   }
 };

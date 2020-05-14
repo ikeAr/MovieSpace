@@ -10,23 +10,6 @@ var user=require('../models/user');
 router.get('/', function (req, res, next) {
     res.render('index', {title: 'Express'});
 });
-//mongoose测试
-router.get('/mongooseTest', function (req, res, next) {
-    mongoose.connect('mongodb://localhost/pets', {useMongoClient: true});
-    mongoose.Promise = global.Promise;
-
-    var Cat = mongoose.model('Cat', {name: String});
-
-    var tom = new Cat({name: 'Tom'});
-    tom.save(function (err) {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log('success insert');
-        }
-    });
-    res.send('数据库连接测试');
-});
 //显示主页的推荐大图等
 router.get('/showIndex', function (req, res, next) {
     recommend.findAll(function (err, getRecommend) {
@@ -65,7 +48,8 @@ router.post('/showUser', function (req, res, next) {
             username:getUser.username,
             userMail:getUser.userMail,
             userPhone:getUser.userPhone,
-            userStop:getUser.userStop
+            userStop:getUser.userStop,
+            isUserAdmin:getUser.userAdmin
         }})
     })
 });
