@@ -1,9 +1,11 @@
 <template lang="html">
-<!--此页面需要-->
   <div class="container">
     <div>
-      <movie-index-header ></movie-index-header>   <!--  展示引入的header组件 -->
+      <movie-index-header ></movie-index-header> 
     </div>
+    <span class="genre">
+      <lable v-for="(genre,index) in genres" :key="index" for="idnex" @change="checkedGenres"><input type="checkbox" id='index' :v-model="checkedGenres"/>{{genre}}<lable>
+    </span>
     <div class="contentMain">
       <div>
         <div class="contentLeft">
@@ -14,7 +16,7 @@
       </div>
     </div>
     <div>
-      <common-footer></common-footer>  <!--  展示引入的footer组件 -->
+      <common-footer></common-footer>
     </div>
   </div>
 </template>
@@ -27,7 +29,10 @@ export default {
   name: "movieList",
   data() {
     return {
-      movieItems: []
+      movieItems: [],
+      genres: [],
+      checkedGenres: [],
+      allMovies: []
     };
   },
   components: {
@@ -40,11 +45,28 @@ export default {
   created() {
     //    获取所有电影
     this.$http.get("http://localhost:3000/movie/list").then(data => {
-      this.movieItems = data.body.data;
+      this.allMovies = data.body.data;
+      this.movieItems = data.body.data.slice(0);
+      for (let movie of this.movieItems) {
+        for (let genre of movie.genres) {
+          if (!this.genres.includes(genre)) {
+            this.genres.push(genre);
+          }
+        }
+      }
       console.log(data.body);
     });
   },
-  methods: {}
+  methods: {
+    checkedGenres() {
+      this.movieItems = [];
+      for (let movie of this.allMovies) {
+        if (this.checkedGenres.includes(movie.genres)) {
+          this.movieItems.push(movie);
+        }
+      }
+    }
+  }
 };
 </script>
 
@@ -55,6 +77,11 @@ export default {
 }
 .contentMain {
   padding-top: 150px;
+}
+.genre {
+  width: 20px;
+  height: 10px;
+  background-color: darkgray;
 }
 .contentText {
   font-size: 15px;
