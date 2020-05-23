@@ -10,11 +10,11 @@
 <!--用户的相关信息-->
 <label>收件箱</label>
 <div>
-  <email-list v-for="item in receive_items" :title="item.title" :fromUser="item.fromUser" :context="item.context"></email-list>
+  <!-- <email-list v-for="item in receive_items" :title="item.title" :fromUser="item.fromUser" :context="item.context"></email-list> -->
 </div>
 <label>发件箱</label>
 <div>
-  <email-list v-for="item in send_items" :title="item.title" :fromUser="item.fromUser" :context="item.context"></email-list>
+  <!-- <email-list v-for="item in send_items" :title="item.title" :fromUser="item.fromUser" :context="item.context"></email-list> -->
 </div>
 
 <send-talk-box></send-talk-box>
