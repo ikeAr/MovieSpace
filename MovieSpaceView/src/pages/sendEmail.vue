@@ -18,7 +18,10 @@
 </div>
 
 <send-talk-box></send-talk-box>
-    <common-footer></common-footer>  <!--  展示引入的footer组件 -->
+    <common-footer></common-footer> 
+     <Modal title="提示语" v-model="alertShow" class-name="vertical-center-modal">
+      <p>{{alertMessage}}</p>
+  </Modal>
   </div>
 </template>
 <script>
@@ -33,7 +36,9 @@ export default {
     return {
       receive_items: [],
       send_items: [],
-      detail: []
+      detail: [],
+      alertShow: false,
+      alertMessage: ""
     };
   },
   components: {
@@ -46,15 +51,15 @@ export default {
 
   //  这里用于获取数据，需要获得主页推荐，主页新闻列表，主页电影列表
   created() {
-    let userId =sessionStorage._id;
+    let userId = sessionStorage._id;
     let send_data = {
-      token:sessionStorage.token,
-      user_id:sessionStorage._id,
+      token: sessionStorage.token,
+      user_id: sessionStorage._id,
       receive: 0
     };
     let receive_data = {
-      token:sessionStorage.token,
-      user_id:sessionStorage._id,
+      token: sessionStorage.token,
+      user_id: sessionStorage._id,
       receive: 1
     };
 
@@ -63,7 +68,8 @@ export default {
         .post("http://localhost:3000/users/showEmail", send_data)
         .then(data => {
           if (data.body.status == 1) {
-            alert(data.body.message);
+            this.alertMessage = data.body.message;
+            this.alertShow = true;
           } else {
             this.send_items = data.body.data;
           }
@@ -73,14 +79,16 @@ export default {
         .post("http://localhost:3000/users/showEmail", receive_data)
         .then(data => {
           if (data.body.status == 1) {
-            alert(data.body.message);
+            this.alertMessage = data.body.message;
+            this.alertShow = true;
           } else {
             this.receive_items = data.body.data;
           }
           console.log(data.body.data);
         });
     } else {
-      alert("用户信息错误");
+      this.alertMessage = "用户信息错误";
+      this.alertShow = true;
     }
   },
   methods: {}

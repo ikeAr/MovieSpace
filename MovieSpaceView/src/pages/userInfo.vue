@@ -45,7 +45,10 @@
     <button v-on:click=LogOut()>退出登陆</button>
 </div>
 </div>
-    <common-footer></common-footer>  <!--  展示引入的footer组件 -->
+    <common-footer></common-footer> 
+     <Modal title="提示语" v-model="alertShow" class-name="vertical-center-modal" @on-ok="LogOutConfirm()" @on-cancel="LogOutConcel()">
+      <p>{{alertMessage}}</p>
+  </Modal>
   </div>
 </template>
 <script>
@@ -61,7 +64,9 @@ export default {
       userStatus: "",
       showRePassword: false,
       password: "",
-      repassword: ""
+      repassword: "",
+      alertShow: false,
+      alertMessage: ""
     };
   },
   components: {
@@ -80,7 +85,8 @@ export default {
         .post("http://localhost:3000/showUser", { user_id: userId })
         .then(data => {
           if (data.body.status == 1) {
-            alert(data.body.message);
+            this.alertMessage = data.body.message;
+            this.alertShow = true;
           } else {
             this.detail = data.body.data;
             if (data.body.data.userStop) {
@@ -92,7 +98,8 @@ export default {
           console.log(data.body.data);
         });
     } else {
-      alert("用户信息错误，请重新登陆");
+      this.alertMessage = "用户信息错误，请重新登陆";
+      this.alertShow = true;
       this.$router.push({ path: "loginPage" });
     }
   },
@@ -112,19 +119,24 @@ export default {
         })
         .then(data => {
           if (data.body.status == 1) {
-            alert(data.body.message);
+            this.alertMessage = data.body.message;
+            this.alertShow = true;
           } else {
-            alert(data.body.message);
-            this.$router.go(-1);
+            this.alertMessage = data.body.message;
+            this.alertShow = true;
           }
         });
     },
     LogOut(event) {
-      const $result = confirm("您确定要退出么");
-      if ($result) {
-        sessionStorage.clear();
-        this.$router.push({ path: "loginPage" });
-      }
+      this.alertMessage = "您确定要退出么？";
+      this.alertShow = true;
+    },
+    LogOutConfirm() {
+      sessionStorage.clear();
+      this.$router.push({ path: "loginPage" });
+    },
+    LogOutConcel() {
+      this.alertShow = false;
     }
   }
 };

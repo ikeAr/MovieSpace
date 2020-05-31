@@ -8,7 +8,9 @@
         <router-link :to="{path: '/movieDetail', query:{ id: id }}" class="goods-list-link">
           {{movieName}}&#8194|&#8194{{movieOriginalTitle}} 
           <div class="movieTime">{{movieTime}}</div>
+          <div class="movieActors" v-for="movieActor in movieActors">{{movieActor.name}}&#8194&#8194</div>
         </router-link>
+        
       </div>
     </div>
      <div class="clearFloat"></div>
@@ -16,7 +18,14 @@
 </template>
 <script>
 export default {
-  props: ["id", "movieName", "movieTime", "movieImage", "movieOriginalTitle"]
+  props: {
+    id: String,
+    movieName: String,
+    movieTime: String,
+    movieImage: String,
+    movieOriginalTitle: String,
+    movieActors: [],
+  }
 };
 </script>
 <style lang="css" scoped>
@@ -45,4 +54,8 @@ img {
   padding: 5px;
   border-bottom: 1px dashed #ababab;
 }
+.movieActors{
+  text-align: left;
+  font-size: 15px;
+} 
 </style>

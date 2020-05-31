@@ -5,7 +5,7 @@
     </div>
      <div class="genre" >
        <span v-for="(genre,index) in genres" :key="index">
-        <input class="singleMovie" type="checkbox"  @change="checkedGenresMovies" :v-model="checkedGenres" />
+        <input class="singleMovie" type="checkbox"  @change="checkedGenresMovies()" :value="genre" v-model="checkedGenres" />
         <label class="detailedGener" >{{genre}}</label>      
        </span>
     </div>
@@ -20,7 +20,8 @@
               :movieName="item.movieName" 
               :movieTime="item.movieTime[0]" 
               :movieImage="item.movieImg"
-              :movieOriginalTitle="item.movieOriginalTitle">
+              :movieOriginalTitle="item.movieOriginalTitle"
+              :movieActors="item.movieActors">
             </movies-list><!--引入MovieList-->
           </ul>
         </div>
@@ -53,7 +54,8 @@ export default {
       pageSize: 5,
       pageNum: 1,
       dataShow: [],
-      currentPage: 0
+      currentPage: 0,
+      selectedMovies: []
     };
   },
   components: {
@@ -62,14 +64,33 @@ export default {
     MoviesList
   },
 
-  //  这里用于获取数据
   created() {
-    //    获取所有电影
     this.$http.get("http://localhost:3000/movie/list").then(data => {
       this.allMovies = JSON.parse(JSON.stringify(data.body.data));
-      this.movieItems = data.body.data.slice(0);
+      this.paging(data.body.data.slice(0));
+    });
+  },
+  methods: {
+    checkedGenresMovies() {
+      this.selectedMovies = [];
+      if (this.checkedGenres.length === 0) {
+        this.selectedMovies = this.allMovies;
+      } else {
+        for (let movie of this.allMovies) {
+          for (let movieGener of movie.genres) {
+            if (this.checkedGenres.includes(movieGener) && !this.selectedMovies.includes(movie))
+            {
+              this.selectedMovies.push(movie);
+            }
+          }
+        }
+      }
+      this.paging(this.selectedMovies);
+    },
+    paging(movies) {
+      this.movieItems = movies;
       this.pageNum = Math.ceil(this.movieItems.length / this.pageSize) || 1;
-      console.log(this.pageNum)
+      console.log(this.pageNum);
       for (let i = 0; i < this.pageNum; i++) {
         this.totalPage[i] = this.movieItems.slice(
           this.pageSize * i,
@@ -82,17 +103,6 @@ export default {
           if (!this.genres.includes(genre)) {
             this.genres.push(genre);
           }
-        }
-      }
-    });
-  },
-  methods: {
-    checkedGenresMovies() {
-      this.movieItems = [];
-      console.log(this.checkedGenres);
-      for (let movie of this.allMovies) {
-        if (this.checkedGenres.includes(movie.genres)) {
-          this.movieItems.push(movie);
         }
       }
     },
@@ -111,7 +121,7 @@ export default {
 </script>
 
 <style lang="css" scoped>
-.primaryButton{
+.primaryButton {
   height: 100px;
 }
 .container {
@@ -120,6 +130,7 @@ export default {
 }
 
 .genre {
+  padding-left: 20px;
   text-align: left;
   line-height: 30px;
   height: 30px;

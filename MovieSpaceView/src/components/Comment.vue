@@ -14,6 +14,12 @@
 <div style="padding-top: 10px">
     <button v-on:click="send_comment">评论</button>
 </div>
+    <Modal
+        title="提示语"
+        v-model="alertShow"
+        class-name="vertical-center-modal">
+        <p>{{alertMessage}}</p>
+    </Modal>
 </div>
 
 </template>
@@ -24,7 +30,9 @@ export default {
   data() {
     return {
       items: [],
-      context: ""
+      context: "",
+      alertShow: false,
+      alertMessage: ""
     };
   },
   created() {
@@ -36,7 +44,8 @@ export default {
         if (data.body.status == 0) {
           this.items = data.body.data;
         } else {
-          alert("获得失败");
+          this.alertMessage = "获取失败";
+          this.alertShow = true;
         }
       });
   },
@@ -47,7 +56,7 @@ export default {
         send_data = {
           movie_id: this.movie_id,
           context: this.context,
-          username:sessionStorage.username
+          username: sessionStorage.username
         };
       } else {
         send_data = {
@@ -59,7 +68,8 @@ export default {
       this.$http
         .post("http://localhost:3000/users/postCommment", send_data)
         .then(data => {
-          alert(data.body.message);
+          this.alertMessage = data.body.message;
+          this.alertShow = true;
         });
     }
   }

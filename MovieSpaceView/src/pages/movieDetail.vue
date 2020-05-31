@@ -25,6 +25,9 @@
     <div>
       <common-footer></common-footer>  <!--  展示引入的footer组件 -->
     </div>
+     <Modal title="提示语" v-model="alertShow" class-name="vertical-center-modal">
+      <p>{{alertMessage}}</p>
+  </Modal>
   </div>
 </template>
 <script>
@@ -38,6 +41,8 @@ export default {
   data() {
     return {
       detail: [],
+      alertShow:false,
+      alertMessage:"",
       movie_id: ""
     };
   },
@@ -76,7 +81,8 @@ export default {
                   data2.body.data.movieNumSuppose;
               });
           } else {
-            alert(data_temp.message);
+            this.alertMessage = data_temp.message;
+            this.alertShow = true;
           }
         });
     },
@@ -86,9 +92,9 @@ export default {
         .post("http://localhost:3000/movie/download", { movie_id: movie_id })
         .then(data1 => {
           if (data1.status == 1) {
-            alert(data1.message);
+            this.alertMessage = data1.message;
+            this.alertShow = true;
           } else {
-            //          console.log(data1.data)
             window.location = data1.data;
           }
         });
