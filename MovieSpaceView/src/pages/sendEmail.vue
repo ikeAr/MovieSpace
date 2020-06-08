@@ -1,27 +1,46 @@
-<template lang="html">
-<!--此页面需要-->
-  <div class="container">
+<template>
   <div>
-      <movie-index-header ></movie-index-header>   <!--  展示引入的header组件 -->
-  </div>
-  <div class="userMessage">
-    <user-message></user-message>
-  </div>
-<!--用户的相关信息-->
-<label>收件箱</label>
-<div>
-  <!-- <email-list v-for="item in receive_items" :title="item.title" :fromUser="item.fromUser" :context="item.context"></email-list> -->
-</div>
-<label>发件箱</label>
-<div>
-  <!-- <email-list v-for="item in send_items" :title="item.title" :fromUser="item.fromUser" :context="item.context"></email-list> -->
-</div>
-
-<send-talk-box></send-talk-box>
-    <common-footer></common-footer> 
-     <Modal title="提示语" v-model="alertShow" class-name="vertical-center-modal">
-      <p>{{alertMessage}}</p>
-  </Modal>
+    <div>
+      <movie-index-header></movie-index-header>
+    </div>
+    <div class="userMessage">
+      <user-message></user-message>
+    </div>
+    <div class="layout">
+      <Layout>
+        <Sider breakpoint="md" collapsible :collapsed-width="78" v-model="isCollapsed">
+          <Menu active-name="1-2" theme="dark" width="auto" :class="menuitemClasses">
+            <MenuItem name="1-1">
+              <Icon type="ios-mail" />
+              <span @click="BuildNewEmail()">新建邮件</span>
+            </MenuItem>
+            <MenuItem name="1-2">
+              <Icon type="ios-archive" />
+              <span @click="ShowReceiveEmail()">收件箱</span>
+            </MenuItem>
+            <MenuItem name="1-3">
+              <Icon type="ios-send" />
+              <span @click="ShowSendEmail()">发件箱</span>
+            </MenuItem>
+          </Menu>
+          <div slot="trigger"></div>
+        </Sider>
+        <Layout>
+          <Header class="layout-header-bar"></Header>
+          <Content :style="{margin: '20px', background: '#fff', minHeight: '593.4px'}">
+            <div v-show="isNewEmail">
+              <send-talk-box></send-talk-box>
+            </div>
+            <div v-show="isShowReceiveEmail">
+              <email-list></email-list>
+            </div>
+            <div v-show="isShowSendEmail">
+              <send-talk-box></send-talk-box>
+            </div>
+          </Content>
+        </Layout>
+      </Layout>
+    </div>
   </div>
 </template>
 <script>
@@ -38,7 +57,11 @@ export default {
       send_items: [],
       detail: [],
       alertShow: false,
-      alertMessage: ""
+      alertMessage: "",
+      isCollapsed: false,
+      isNewEmail: true,
+      isShowReceiveEmail: false,
+      isShowSendEmail: false
     };
   },
   components: {
@@ -48,8 +71,11 @@ export default {
     EmailList,
     SendTalkBox
   },
-
-  //  这里用于获取数据，需要获得主页推荐，主页新闻列表，主页电影列表
+  computed: {
+    menuitemClasses: function() {
+      return ["menu-item", this.isCollapsed ? "collapsed-menu" : ""];
+    }
+  },
   created() {
     let userId = sessionStorage._id;
     let send_data = {
@@ -91,7 +117,24 @@ export default {
       this.alertShow = true;
     }
   },
-  methods: {}
+  methods: {
+    BuildNewEmail: function(event) {
+      this.isNewEmail = true;
+      this.isShowReceiveEmail = false;
+      this.isShowSendEmail = false;
+    },
+    ShowReceiveEmail: function(event) {
+      console.log("hello");
+      this.isNewEmail = false;
+      this.isShowReceiveEmail = true;
+      this.isShowSendEmail = false;
+    },
+    ShowSendEmail() {
+      this.isNewEmail = false;
+      this.isShowReceiveEmail = false;
+      this.isShowSendEmail = true;
+    }
+  }
 };
 </script>
 
@@ -103,9 +146,41 @@ export default {
   width: 100%;
   margin: 0 auto;
 }
-.userMessage {
-  padding-top: 60px;
-  margin-top: -10px;
-  margin-left: -10px;
+.layout {
+  border: 1px solid #d7dde4;
+  background: #f5f7f9;
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.layout-header-bar {
+  background: #fff;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+.menu-item span {
+  display: inline-block;
+  overflow: hidden;
+  width: 69px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+  transition: width 0.2s ease 0.2s;
+}
+.menu-item i {
+  transform: translateX(0px);
+  transition: font-size 0.2s ease, transform 0.2s ease;
+  vertical-align: middle;
+  font-size: 16px;
+}
+.collapsed-menu span {
+  width: 0px;
+  transition: width 0.2s ease;
+}
+.collapsed-menu i {
+  transform: translateX(5px);
+  transition: font-size 0.2s ease 0.2s, transform 0.2s ease 0.2s;
+  vertical-align: middle;
+  font-size: 22px;
 }
 </style>
+

@@ -53,11 +53,11 @@ export default {
       tableData1: this.mockTableData1(),
       tableColumns1: [
         {
-          title: "Name",
+          title: "用户名",
           key: "name"
         },
         {
-          title: "Status",
+          title: "用户状态",
           key: "status",
           render: (h, params) => {
             const row = params.row;
@@ -87,7 +87,7 @@ export default {
           }
         },
         {
-          title: "Portrayal",
+          title: "年龄",
           key: "portrayal",
           render: (h, params) => {
             return h(
@@ -129,7 +129,7 @@ export default {
           }
         },
         {
-          title: "People",
+          title: "角色",
           key: "people",
           render: (h, params) => {
             return h(
@@ -171,14 +171,14 @@ export default {
           }
         },
         {
-          title: "Sampling Time",
+          title: "联系方式",
           key: "time",
           render: (h, params) => {
-            return h("div", "Almost" + params.row.time + "days");
+            return h("div", "Almost " + params.row.time + " days");
           }
         },
         {
-          title: "Updated Time",
+          title: "更新时间",
           key: "update",
           render: (h, params) => {
             return h(

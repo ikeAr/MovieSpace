@@ -1,18 +1,16 @@
 <template lang="html">
-<div>
-<div>
-<input v-model="toUserName" placeholder="发送用户名">
-</div>
-    <div style="padding: 10px">
-     <input v-model="title" placeholder="发送标题">
-</div>
-
-    <div style="padding: 5px">
-     <textarea v-model="context" style="width: 80%;height:50px ;" placeholder="内容"></textarea>
-</div>
-
+<div style="width: 40%">
+  <i-input type="text" v-model="toUserName" placeholder="发送用户名">
+      <Icon type="ios-person-outline" slot="prepend"></Icon>
+    </i-input>   
+    <Divider />
+   <i-input type="text" v-model="title" placeholder="主题">
+      <Icon type="md-book" slot="prepend"></Icon>
+    </i-input>
+    <Divider />
+     <Input v-model="context" type="textarea" :rows="4" placeholder="请输入发送内容" />
 <div style="padding-top: 10px">
-    <button v-on:click="send_mail">发送站内信</button>
+  <i-button type="primary" v-on:click="send_mail()">发送站内信</i-button>
 </div>
 <Modal
   title="提示语"
