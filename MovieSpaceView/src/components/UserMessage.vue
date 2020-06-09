@@ -1,22 +1,21 @@
 <template lang="html">
     <div v-if=!isLogin class="header">
-      <Row>
-<i-col span="2" offset="22">
-       <router-link to="/loginPage">
+
+        <i-col span="2" offset="22">
+          <router-link to="/loginPage">
           <div class="header_menu"><Icon type="person" />登录</div>
-      </router-link>
-</i-col>
-</Row>
+          </router-link>
+          </i-col>
 
     </div>
     <div v-else class="header">
-          <Row>
-      <i-col span="2"  offset="22">
+          
+      <i-col span="2" offset="22">
        <router-link :to="{path: '/userInfo', query:{ id: id }}">
           <div class="header_menu"><Icon type="person" />{{username}} | 退出登录</div>
       </router-link>
       </i-col>
-      </Row>
+    
     </div>
 </template>.
 <!--这里需要一开始对于session进行检测，如果存在session则直接显示登录，不存在则是跳转链接-->

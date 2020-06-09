@@ -4,9 +4,6 @@
   <div>
       <movie-index-header ></movie-index-header>   <!--  展示引入的header组件 -->
   </div>
-  <div class="userMessage">
-    <user-message></user-message>
-  </div>
   <div class="contentPic">
       <index-header-pic v-for="item in headerItems" :key="item._id"  :recommendImg="item.recommendImg" :recommendSrc="item.recommendSrc" :recommendTitle="item.recommendTitle"></index-header-pic>
   </div>

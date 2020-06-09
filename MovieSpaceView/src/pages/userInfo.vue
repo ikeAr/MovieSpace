@@ -4,9 +4,7 @@
   <div>
       <movie-index-header ></movie-index-header>   <!--  展示引入的header组件 -->
   </div>
-  <div class="userMessage">
-    <user-message></user-message>
-  </div>
+
 <!--用户的相关信息-->
 
 <div>

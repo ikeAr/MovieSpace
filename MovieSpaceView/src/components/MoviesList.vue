@@ -9,8 +9,7 @@
           {{movieName}}&#8194|&#8194{{movieOriginalTitle}} 
           <div class="movieTime">{{movieTime}}</div>
           <div class="movieActors" v-for="movieActor in movieActors">{{movieActor.name}}&#8194&#8194</div>
-        </router-link>
-        
+        </router-link>   
       </div>
     </div>
      <div class="clearFloat"></div>
