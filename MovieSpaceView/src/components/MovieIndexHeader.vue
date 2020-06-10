@@ -77,6 +77,7 @@
   </div>
 </template>
 <script>
+import CommonFooter from "../components/commonFooter";
 export default {
   data() {
     return {
@@ -99,6 +100,9 @@ export default {
       alertShow: false,
       alertMessage: ""
     };
+  },
+  components: {
+    CommonFooter
   },
   created() {
     let token = sessionStorage.getItem("token");

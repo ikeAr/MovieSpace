@@ -1,5 +1,5 @@
 <template lang="html">
-<div style="width: 40%">
+<div style="width: 40%;margin:20px">
   <i-input type="text" v-model="toUserName" placeholder="发送用户名">
       <Icon type="ios-person-outline" slot="prepend"></Icon>
     </i-input>   

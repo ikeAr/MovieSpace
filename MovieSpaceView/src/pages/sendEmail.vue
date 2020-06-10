@@ -3,9 +3,6 @@
     <div>
       <movie-index-header></movie-index-header>
     </div>
-    <div class="userMessage">
-      <user-message></user-message>
-    </div>
     <div class="layout">
       <Layout>
         <Sider breakpoint="md" collapsible :collapsed-width="78" v-model="isCollapsed">
@@ -26,8 +23,7 @@
           <div slot="trigger"></div>
         </Sider>
         <Layout>
-          <Header class="layout-header-bar"></Header>
-          <Content :style="{margin: '20px', background: '#fff', minHeight: '593.4px'}">
+          <Content :style="{background: '#fff', minHeight: '593.4px'}">
             <div v-show="isNewEmail">
               <send-talk-box></send-talk-box>
             </div>
@@ -35,11 +31,14 @@
               <email-list></email-list>
             </div>
             <div v-show="isShowSendEmail">
-              <send-talk-box></send-talk-box>
+              <send-email-list></send-email-list>
             </div>
           </Content>
         </Layout>
       </Layout>
+    </div>
+    <div>
+      <common-footer></common-footer>
     </div>
   </div>
 </template>
@@ -49,6 +48,7 @@ import CommonFooter from "../components/commonFooter";
 import UserMessage from "../components/UserMessage";
 import EmailList from "../components/EmailList.vue";
 import SendTalkBox from "../components/SendTalkBox.vue";
+import SendEmailList from "../components/SendEmailList";
 export default {
   name: "HelloWorld",
   data() {
@@ -69,52 +69,12 @@ export default {
     CommonFooter,
     UserMessage,
     EmailList,
-    SendTalkBox
+    SendTalkBox,
+    SendEmailList
   },
   computed: {
     menuitemClasses: function() {
       return ["menu-item", this.isCollapsed ? "collapsed-menu" : ""];
-    }
-  },
-  created() {
-    let userId = sessionStorage._id;
-    let send_data = {
-      token: sessionStorage.token,
-      user_id: sessionStorage._id,
-      receive: 0
-    };
-    let receive_data = {
-      token: sessionStorage.token,
-      user_id: sessionStorage._id,
-      receive: 1
-    };
-
-    if (userId) {
-      this.$http
-        .post("http://localhost:3000/users/showEmail", send_data)
-        .then(data => {
-          if (data.body.status == 1) {
-            this.alertMessage = data.body.message;
-            this.alertShow = true;
-          } else {
-            this.send_items = data.body.data;
-          }
-          console.log(data.body.data);
-        });
-      this.$http
-        .post("http://localhost:3000/users/showEmail", receive_data)
-        .then(data => {
-          if (data.body.status == 1) {
-            this.alertMessage = data.body.message;
-            this.alertShow = true;
-          } else {
-            this.receive_items = data.body.data;
-          }
-          console.log(data.body.data);
-        });
-    } else {
-      this.alertMessage = "用户信息错误";
-      this.alertShow = true;
     }
   },
   methods: {
@@ -147,7 +107,6 @@ export default {
   margin: 0 auto;
 }
 .layout {
-  border: 1px solid #d7dde4;
   background: #f5f7f9;
   position: relative;
   border-radius: 4px;
