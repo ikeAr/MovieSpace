@@ -72,7 +72,7 @@ export default {
             sessionStorage.setItem("token", data.body.data.token);
             sessionStorage.setItem("username", data.body.data.user[0].username);
             sessionStorage.setItem("_id", data.body.data.user[0]._id);
-            this.$router.go(-1);
+            this.$router.push({path:"/"});
           }
         });
     },

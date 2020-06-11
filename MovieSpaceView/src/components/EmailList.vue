@@ -6,7 +6,7 @@
         <Menu active-name="1-2" theme="primary" width="auto" :class="menuitemClasses">
           <div v-for="(item,index) in receive_items" :key="index">
             <MenuItem :name="index" @click.native="shouEmailDetail(item)">
-              <div>{{receviver}}{{item.fromUser}}</div>
+              <div>{{receviver}}{{item.fromUserName}}</div>
               <div>{{emailTitle}}{{item.title}}</div>
             </MenuItem>
           </div>
@@ -15,7 +15,7 @@
       <Layout>
         <Content :style="{margin: '20px', background: '#fff', minHeight: '100%'}">
           <div style="width: 30%">
-            <i-input type="text" disabled :placeholder="emailDetail.fromUser">
+            <i-input type="text" disabled :placeholder="emailDetail.fromUserName">
               <Icon type="ios-person-outline" slot="prepend"></Icon>
               <span slot="prepend" :style="{padding:'10px'}">{{receviver}}</span>
             </i-input>
@@ -45,14 +45,14 @@ export default {
       title: "",
       context: "",
       receive_items: [
-        { fromUser: "111", title: "111", context: "111" },
-        { fromUser: "222", title: "222", context: "222" },
-        { fromUser: "333", title: "333", context: "333" },
-        { fromUser: "333", title: "333", context: "333" },
-        { fromUser: "333", title: "333", context: "333" },
-        { fromUser: "333", title: "333", context: "333" },
-        { fromUser: "333", title: "333", context: "333" },
-        { fromUser: "333", title: "333", context: "333" }
+        // { fromUser: "111", title: "111", context: "111" },
+        // { fromUser: "222", title: "222", context: "222" },
+        // { fromUser: "333", title: "333", context: "333" },
+        // { fromUser: "333", title: "333", context: "333" },
+        // { fromUser: "333", title: "333", context: "333" },
+        // { fromUser: "333", title: "333", context: "333" },
+        // { fromUser: "333", title: "333", context: "333" },
+        // { fromUser: "333", title: "333", context: "333" }
       ],
       emailDetail: {},
       receviver: "From：",
@@ -60,33 +60,33 @@ export default {
     };
   },
   created() {
-    // let userId = sessionStorage._id;
+    let userId = sessionStorage._id;
     // let send_data = {
     //   token: sessionStorage.token,
     //   user_id: sessionStorage._id,
     //   receive: 0
     // };
-    // let receive_data = {
-    //   token: sessionStorage.token,
-    //   user_id: sessionStorage._id,
-    //   receive: 1
-    // };
-    // if (userId) {
-    //   this.$http
-    //     .post("http://localhost:3000/users/showEmail", receive_data)
-    //     .then(data => {
-    //       if (data.body.status == 1) {
-    //         this.alertMessage = data.body.message;
-    //         this.alertShow = true;
-    //       } else {
-    //         this.receive_items = data.body.data;
-    //       }
-    //       console.log(data.body.data);
-    //     });
-    // } else {
-    //   this.alertMessage = "用户信息错误";
-    //   this.alertShow = true;
-    // }
+    let receive_data = {
+      token: sessionStorage.token,
+      user_id: sessionStorage._id,
+      receive: 0
+    };
+    if (userId) {
+      this.$http
+        .post("http://localhost:3000/users/showEmail", receive_data)
+        .then(data => {
+          if (data.body.status == 1) {
+            this.alertMessage = data.body.message;
+            this.alertShow = true;
+          } else {
+            this.receive_items = data.body.data;
+          }
+          console.log(data.body.data);
+        });
+    } else {
+      this.alertMessage = "用户信息错误";
+      this.alertShow = true;
+    }
   },
   computed: {
     menuitemClasses: function() {

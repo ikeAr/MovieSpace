@@ -10,10 +10,16 @@ const init_token = 'TKL02o';
 
 router.post('/login', function (req, res, next) {
     if (!req.body.username) {
-        res.json({status: 1, message: "用户名为空"})
+        res.json({
+            status: 1,
+            message: "用户名为空"
+        })
     }
     if (!req.body.password) {
-        res.json({status: 1, message: "密码为空"})
+        res.json({
+            status: 1,
+            message: "密码为空"
+        })
     }
     user.findUserLogin(req.body.username, req.body.password, function (err, userSave) {
         if (userSave.length != 0) {
@@ -24,42 +30,71 @@ router.post('/login', function (req, res, next) {
             // res.json(userSave[0]._id)
             // var token_after = md5.update(token_before).digest('hex')
             var token_after = getMD5Password(userSave[0]._id)
-            res.json({status: 0, data: {token: token_after,user:userSave}, message: "用户登录1成功"})
+            res.json({
+                status: 0,
+                data: {
+                    token: token_after,
+                    user: userSave
+                },
+                message: "用户登录1成功"
+            })
         } else {
-            res.json({status: 1, message: "用户名或者密码错误"})
+            res.json({
+                status: 1,
+                message: "用户名或者密码错误"
+            })
         }
     })
 });
 
 router.post('/register', function (req, res, next) {
     if (!req.body.username) {
-        res.json({status: 1, message: "用户名为空"})
+        res.json({
+            status: 1,
+            message: "用户名为空"
+        })
     }
     if (!req.body.password) {
-        res.json({status: 1, message: "密码为空"})
+        res.json({
+            status: 1,
+            message: "密码为空"
+        })
     }
     if (!req.body.userMail) {
-        res.json({status: 1, message: "用户邮箱为空"})
+        res.json({
+            status: 1,
+            message: "用户邮箱为空"
+        })
     }
     if (!req.body.userPhone) {
-        res.json({status: 1, message: "用户手机为空"})
+        res.json({
+            status: 1,
+            message: "用户手机为空"
+        })
     }
     user.findByUsername(req.body.username, function (err, userSave) {
         if (userSave.length != 0) {
             // res.json(userSave)
-            res.json({status: 1, message: "用户已注册"})
+            res.json({
+                status: 1,
+                message: "用户已注册"
+            })
         } else {
             var registerUser = new user({
                 username: req.body.username,
                 password: req.body.password,
                 userMail: req.body.userMail,
                 userPhone: req.body.userPhone,
+                age: req.body.age,
                 userAdmin: 0,
                 userPower: 0,
                 userStop: 0
             })
             registerUser.save(function () {
-                res.json({status: 0, message: "注册成功"})
+                res.json({
+                    status: 0,
+                    message: "注册成功"
+                })
             })
         }
     })
@@ -71,10 +106,16 @@ router.post('/postCommment', function (req, res, next) {
         var username = "匿名用户"
     }
     if (!req.body.movie_id) {
-        res.json({status: 1, message: "电影id为空"})
+        res.json({
+            status: 1,
+            message: "电影id为空"
+        })
     }
     if (!req.body.context) {
-        res.json({status: 1, message: "评论内容为空"})
+        res.json({
+            status: 1,
+            message: "评论内容为空"
+        })
     }
 
     var saveComment = new comment({
@@ -84,10 +125,16 @@ router.post('/postCommment', function (req, res, next) {
         check: 0
     })
     saveComment.save(function (err) {
-        if(err){
-            res.json({status: 1, message: err})
-        }else{
-            res.json({status: 0, message: '评论成功'})
+        if (err) {
+            res.json({
+                status: 1,
+                message: err
+            })
+        } else {
+            res.json({
+                status: 0,
+                message: '评论成功'
+            })
         }
 
     })
@@ -95,14 +142,28 @@ router.post('/postCommment', function (req, res, next) {
 
 router.post('/support', function (req, res, next) {
     if (!req.body.movie_id) {
-        res.json({status: 1, message: "电影id传递失败"})
+        res.json({
+            status: 1,
+            message: "电影id传递失败"
+        })
     }
     movie.findById(req.body.movie_id, function (err, supportMovie) {
-        movie.update({_id: req.body.movie_id}, {movieNumSuppose: supportMovie.movieNumSuppose + 1}, function (err) {
+        movie.update({
+            _id: req.body.movie_id
+        }, {
+            movieNumSuppose: supportMovie.movieNumSuppose + 1
+        }, function (err) {
             if (err) {
-                res.json({status: 1, message: "点赞失败", data: err})
+                res.json({
+                    status: 1,
+                    message: "点赞失败",
+                    data: err
+                })
             }
-            res.json({status: 0, message: '点赞成功'})
+            res.json({
+                status: 0,
+                message: '点赞成功'
+            })
         })
     })
 });
@@ -113,62 +174,120 @@ router.post('/findPassword', function (req, res, next) {
     if (req.body.repassword) {
         if (req.body.token) {
             if (!req.body.user_id) {
-                res.json({status: 1, message: "用户登录错误"})
+                res.json({
+                    status: 1,
+                    message: "用户登录错误"
+                })
             }
             if (!req.body.password) {
-                res.json({status: 1, message: "用户老密码错误"})
+                res.json({
+                    status: 1,
+                    message: "用户老密码错误"
+                })
             }
             if (req.body.token == getMD5Password(req.body.user_id)) {
-                user.findOne({_id: req.body.user_id, password: req.body.password}, function (err, checkUser) {
+                user.findOne({
+                    _id: req.body.user_id,
+                    password: req.body.password
+                }, function (err, checkUser) {
                     if (checkUser) {
-                        user.update({_id: req.body.user_id}, {password: req.body.repassword}, function (err, userUpdate) {
+                        user.update({
+                            _id: req.body.user_id
+                        }, {
+                            password: req.body.repassword
+                        }, function (err, userUpdate) {
                             if (err) {
-                                res.json({status: 1, message: "更改错误", data: err})
+                                res.json({
+                                    status: 1,
+                                    message: "更改错误",
+                                    data: err
+                                })
                             }
-                            res.json({status: 0, message: '更改成功', data: userUpdate})
+                            res.json({
+                                status: 0,
+                                message: '更改成功',
+                                data: userUpdate
+                            })
                         })
                     } else {
-                        res.json({status: 1, message: "用户老密码错误"})
+                        res.json({
+                            status: 1,
+                            message: "用户老密码错误"
+                        })
                     }
                 })
 
             } else {
-                res.json({status: 1, message: "用户登录错误"})
+                res.json({
+                    status: 1,
+                    message: "用户登录错误"
+                })
             }
 
         } else {
             user.findUserPassword(req.body.username, req.body.userMail, req.body.userPhone, function (err, userFound) {
                 if (userFound.length != 0) {
-                    user.update({_id: userFound[0]._id}, {password: req.body.repassword}, function (err, userUpdate) {
+                    user.update({
+                        _id: userFound[0]._id
+                    }, {
+                        password: req.body.repassword
+                    }, function (err, userUpdate) {
                         if (err) {
-                            res.json({status: 1, message: "更改错误", data: err})
+                            res.json({
+                                status: 1,
+                                message: "更改错误",
+                                data: err
+                            })
                         }
-                        res.json({status: 0, message: '更改成功', data: userUpdate})
+                        res.json({
+                            status: 0,
+                            message: '更改成功',
+                            data: userUpdate
+                        })
                     })
                 } else {
-                    res.json({status: 1, message: "信息错误"})
+                    res.json({
+                        status: 1,
+                        message: "信息错误"
+                    })
                 }
             })
         }
     } else {
         if (!req.body.username) {
-            res.json({status: 1, message: "用户名称为空"})
+            res.json({
+                status: 1,
+                message: "用户名称为空"
+            })
         }
         if (!req.body.userMail) {
-            res.json({status: 1, message: "用户邮箱为空"})
+            res.json({
+                status: 1,
+                message: "用户邮箱为空"
+            })
         }
         if (!req.body.userPhone) {
-            res.json({status: 1, message: "用户手机为空"})
+            res.json({
+                status: 1,
+                message: "用户手机为空"
+            })
         }
         user.findUserPassword(req.body.username, req.body.userMail, req.body.userPhone, function (err, userFound) {
             if (userFound.length != 0) {
                 res.json({
                     status: 0,
                     message: "验证成功，请修改密码",
-                    data: {username: req.body.username, userMail: req.body.userMail, userPhone: req.body.userPhone}
+                    data: {
+                        username: req.body.username,
+                        userMail: req.body.userMail,
+                        userPhone: req.body.userPhone
+                    }
                 })
             } else {
-                res.json({status: 1, message: "信息错误"})
+                res.json({
+                    status: 1,
+                    message: "信息错误"
+                })
             }
         })
     }
@@ -176,64 +295,110 @@ router.post('/findPassword', function (req, res, next) {
 router.post('/sendEmail', function (req, res, next) {
 
     if (!req.body.token) {
-        res.json({status: 1, message: "用户登录状态错误"})
+        res.json({
+            status: 1,
+            message: "用户登录状态错误"
+        })
     }
     if (!req.body.user_id) {
-        res.json({status: 1, message: "用户登录状态出错"})
+        res.json({
+            status: 1,
+            message: "用户登录状态出错"
+        })
     }
     if (!req.body.toUserName) {
-        res.json({status: 1, message: "未选择相关的用户"})
+        res.json({
+            status: 1,
+            message: "未选择相关的用户"
+        })
     }
     if (!req.body.title) {
-        res.json({status: 1, message: '标题不能为空'})
+        res.json({
+            status: 1,
+            message: '标题不能为空'
+        })
     }
     if (!req.body.context) {
-        res.json({status: 1, message: '内容不能为空'})
+        res.json({
+            status: 1,
+            message: '内容不能为空'
+        })
     }
     if (req.body.token == getMD5Password(req.body.user_id)) {
         user.findByUsername(req.body.toUserName, function (err, toUser) {
             if (toUser.length != 0) {
                 var NewEmail = new mail({
                     fromUser: req.body.user_id,
+                    fromUserName: req.body.fromUserName,
                     toUser: toUser[0]._id,
+                    toUserName: toUser[0].username,
                     title: req.body.title,
                     context: req.body.context
                 })
                 NewEmail.save(function () {
-                    res.json({status: 0, message: "发送成功"})
+                    res.json({
+                        status: 0,
+                        message: "发送成功"
+                    })
                 })
             } else {
-                res.json({status: 1, message: '您发送的对象不存在'})
+                res.json({
+                    status: 1,
+                    message: '您发送的对象不存在'
+                })
             }
         })
     } else {
-        res.json({status: 1, message: "用户登录错误"})
+        res.json({
+            status: 1,
+            message: "用户登录错误"
+        })
     }
 
 });
 
 router.post('/showEmail', function (req, res, next) {
     if (!req.body.token) {
-        res.json({status: 1, message: "用户登录状态错误"})
+        res.json({
+            status: 1,
+            message: "用户登录状态错误"
+        })
     }
     if (!req.body.user_id) {
-        res.json({status: 1, message: "用户登录状态出错"})
+        res.json({
+            status: 1,
+            message: "用户登录状态出错"
+        })
     }
     if (!req.body.receive) {
-        res.json({status: 1, message: "参数出错"})
+        res.json({
+            status: 1,
+            message: "参数出错"
+        })
     }
     if (req.body.token == getMD5Password(req.body.user_id)) {
-        if (req.body.receive == 1) {   
+        if (req.body.receive == 1) {
             mail.findByFromUserId(req.body.user_id, function (err, sendMail) {
-                res.json({status: 0, message: "获取成功", data: sendMail})
+                res.json({
+                    status: 0,
+                    message: "获取成功",
+                    data: sendMail
+                })
             })
         } else {
             mail.findByToUserId(req.body.user_id, function (err, receiveMail) {
-                res.json({status: 0, message: '获取成功', data: receiveMail})
+                res.json({
+                    status: 0,
+                    message: '获取成功',
+                    data: receiveMail
+                })
             })
         }
     } else {
-        res.json({status: 1, message: "用户登录错误"})
+        res.json({
+            status: 1,
+            message: "用户登录错误"
+        })
     }
 });
 

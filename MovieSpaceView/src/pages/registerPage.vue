@@ -22,6 +22,11 @@
               <Icon type="ios-lock-outline" slot="prepend"></Icon>
             </i-input>
           </div>
+           <div class="box">
+            <i-input type="text" v-model="age" placeholder="年龄">
+              <Icon type="md-aperture" slot="prepend"></Icon>
+            </i-input>
+            </div>
           <div class="box">
             <i-input type="text" v-model="userMail" placeholder="邮箱">
               <Icon type="ios-mail-outline" slot="prepend"></Icon>
@@ -54,6 +59,7 @@ export default {
   data() {
     return {
       username: "",
+      age: "",
       password: "",
       userMail: "",
       userPhone: "",
@@ -86,7 +92,8 @@ export default {
           username: this.username,
           password: this.$md5(this.password),
           userMail: this.userMail,
-          userPhone: this.userPhone
+          userPhone: this.userPhone,
+          age: this.age
         };
         this.$http
           .post("http://localhost:3000/users/register", sendDate)

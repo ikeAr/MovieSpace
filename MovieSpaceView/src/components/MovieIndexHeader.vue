@@ -37,6 +37,10 @@
       </div>
       <Divider />
       <div>
+        <div class="box">用户年龄：{{detail.age}}</div>
+      </div>
+      <Divider />
+      <div>
         <div class="box">用户状态：{{userStatus}}</div>
       </div>
       <Divider />
@@ -46,6 +50,10 @@
         <Button type="ghost">发送站内信</Button>
       </router-link>
       <Divider />
+      <div class="demo-drawer-footer">
+        <Button type="ghost" style="margin-right: 8px" @click="cancel()">取消</Button>
+        <Button type="primary" @click="LogOut()">退出登录</Button>
+      </div>
       <div v-show="showRePassword">
         <i-input type="password" v-model="password" placeholder="输入旧密码">
           <Icon type="ios-lock-outline" slot="prepend"></Icon>
@@ -59,11 +67,6 @@
           <Button type="primary" @click="changeUserPassword()">修改密码</Button>
         </div>
       </div>
-      <div class="demo-drawer-footer">
-        <Button style="margin-right: 8px" @click="cancel()">取消</Button>
-        <Button type="primary" @click="LogOut()">退出登录</Button>
-      </div>
-      <common-footer></common-footer>
       <Modal
         title="提示语"
         v-model="alertShow"

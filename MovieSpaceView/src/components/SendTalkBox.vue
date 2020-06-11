@@ -37,11 +37,13 @@ export default {
     send_mail(event) {
       let send_data = {
         token: sessionStorage.token,
+        fromUserName: sessionStorage.username,
         user_id: sessionStorage._id,
         toUserName: this.toUserName,
         title: this.title,
         context: this.context
       };
+      console.log(send_data);
       this.$http
         .post("http://localhost:3000/users/sendEmail", send_data)
         .then(data => {

@@ -4,7 +4,9 @@
   <div>
       <movie-index-header ></movie-index-header>   <!--  展示引入的header组件 -->
   </div>
-
+  <div class="userMessage">
+    <user-message></user-message>
+  </div>
 <!--用户的相关信息-->
 
 <div>
@@ -75,31 +77,7 @@ export default {
 
   //  这里用于获取数据，需要获得主页推荐，主页新闻列表，主页电影列表
   created() {
-    let userId = this.$route.query.id;
-    console.log(this.$route.query.id);
-    console.log(userId);
-    if (userId && sessionStorage.getItem("token")) {
-      this.$http
-        .post("http://localhost:3000/showUser", { user_id: userId })
-        .then(data => {
-          if (data.body.status == 1) {
-            this.alertMessage = data.body.message;
-            this.alertShow = true;
-          } else {
-            this.detail = data.body.data;
-            if (data.body.data.userStop) {
-              this.userStatus = "用户已经被封停";
-            } else {
-              this.userStatus = "用户状态正常";
-            }
-          }
-          console.log(data.body.data);
-        });
-    } else {
-      this.alertMessage = "用户信息错误，请重新登陆";
-      this.alertShow = true;
-      this.$router.push({ path: "loginPage" });
-    }
+    
   },
   methods: {
     ShowChangeUserPassword(event) {

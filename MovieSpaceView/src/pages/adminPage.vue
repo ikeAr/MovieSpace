@@ -6,20 +6,20 @@
     <Layout>
       <Sider breakpoint="md" collapsible :collapsed-width="78" v-model="isCollapsed">
         <Menu active-name="1-2" theme="dark" width="auto" :class="menuitemClasses">
-          <MenuItem name="1-1">
+          <MenuItem name="1-1" @click.native="ManageMovie()">
             <Icon type="ios-videocam" />
             <span>电影管理</span>
           </MenuItem>
-          <MenuItem name="1-2">
+          <MenuItem name="1-2" @click.native="ManageUser()">
             <Icon type="ios-people" />
             <span>用户管理</span>
           </MenuItem>
-          <MenuItem name="1-3">
+          <MenuItem name="1-3" @click.native="ManageComment()">
             <Icon type="ios-pricetags" />
             <span>评论管理</span>
           </MenuItem>
           <MenuItem name="1-4">
-            <Icon type="ios-settings"></Icon>
+            <Icon type="ios-settings" @click.native="ManageNews()"></Icon>
             <span>新闻管理</span>
           </MenuItem>
         </Menu>
@@ -28,10 +28,16 @@
       <Layout>
         <Header class="layout-header-bar">管理系统</Header>
         <Content :style="{margin: '20px', background: '#fff', minHeight: '771.4px'}">
-          <Table :data="tableData1" :columns="tableColumns1" stripe></Table>
+          <Table :data="tableData" :columns="tableColumns" stripe></Table>
           <div style="margin: 10px;overflow: hidden">
             <div style="float: right;">
-              <Page :total="100" :current="1" @on-change="changePage"></Page>
+              <Page
+                :total="200"
+                :current="pageIndex"
+                :page-size="pageNum"
+                show-elevator
+                @on-change="changePage"
+              ></Page>
             </div>
           </div>
         </Content>
@@ -50,187 +56,12 @@ export default {
       isCollapsed: false,
       alertShow: false,
       alertMessage: "",
-      tableData1: this.mockTableData1(),
-      tableColumns1: [
-        {
-          title: "用户名",
-          key: "name"
-        },
-        {
-          title: "用户状态",
-          key: "status",
-          render: (h, params) => {
-            const row = params.row;
-            const color =
-              row.status === 1
-                ? "primary"
-                : row.status === 2
-                ? "success"
-                : "error";
-            const text =
-              row.status === 1
-                ? "Working"
-                : row.status === 2
-                ? "Success"
-                : "Fail";
-
-            return h(
-              "Tag",
-              {
-                props: {
-                  type: "dot",
-                  color: color
-                }
-              },
-              text
-            );
-          }
-        },
-        {
-          title: "年龄",
-          key: "portrayal",
-          render: (h, params) => {
-            return h(
-              "Poptip",
-              {
-                props: {
-                  trigger: "hover",
-                  title: params.row.portrayal.length + "portrayals",
-                  placement: "bottom"
-                }
-              },
-              [
-                h("Tag", params.row.portrayal.length),
-                h(
-                  "div",
-                  {
-                    slot: "content"
-                  },
-                  [
-                    h(
-                      "ul",
-                      this.tableData1[params.index].portrayal.map(item => {
-                        return h(
-                          "li",
-                          {
-                            style: {
-                              textAlign: "center",
-                              padding: "4px"
-                            }
-                          },
-                          item
-                        );
-                      })
-                    )
-                  ]
-                )
-              ]
-            );
-          }
-        },
-        {
-          title: "角色",
-          key: "people",
-          render: (h, params) => {
-            return h(
-              "Poptip",
-              {
-                props: {
-                  trigger: "hover",
-                  title: params.row.people.length + "customers",
-                  placement: "bottom"
-                }
-              },
-              [
-                h("Tag", params.row.people.length),
-                h(
-                  "div",
-                  {
-                    slot: "content"
-                  },
-                  [
-                    h(
-                      "ul",
-                      this.tableData1[params.index].people.map(item => {
-                        return h(
-                          "li",
-                          {
-                            style: {
-                              textAlign: "center",
-                              padding: "4px"
-                            }
-                          },
-                          item.n + "：" + item.c + "People"
-                        );
-                      })
-                    )
-                  ]
-                )
-              ]
-            );
-          }
-        },
-        {
-          title: "联系方式",
-          key: "time",
-          render: (h, params) => {
-            return h("div", "Almost " + params.row.time + " days");
-          }
-        },
-        {
-          title: "更新时间",
-          key: "update",
-          render: (h, params) => {
-            return h(
-              "div",
-              this.formatDate(this.tableData1[params.index].update)
-            );
-          }
-        },
-        {
-          title: "Action",
-          key: "action",
-          width: 150,
-          align: "center",
-          render: (h, params) => {
-            return h("div", [
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "primary",
-                    size: "small"
-                  },
-                  style: {
-                    marginRight: "5px"
-                  },
-                  on: {
-                    click: () => {
-                      this.show(params.index);
-                    }
-                  }
-                },
-                "View"
-              ),
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "error",
-                    size: "small"
-                  },
-                  on: {
-                    click: () => {
-                      this.remove(params.index);
-                    }
-                  }
-                },
-                "Delete"
-              )
-            ]);
-          }
-        }
-      ]
+      tableData: [],
+      tableColumns: [],
+      users: [],
+      movies: [],
+      pageIndex: 1,
+      pageNum: 20
     };
   },
   computed: {
@@ -287,53 +118,223 @@ export default {
             });
         });
     },
-    mockTableData1() {
-      let data = [];
-      for (let i = 0; i < 10; i++) {
-        data.push({
-          name: "Business" + Math.floor(Math.random() * 100 + 1),
-          status: Math.floor(Math.random() * 3 + 1),
-          portrayal: ["City", "People", "Cost", "Life", "Entertainment"],
-          people: [
-            {
-              n: "People" + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: "People" + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: "People" + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
+    ManageUser() {
+      this.tableData = this.users;
+      this.tableColumns = [
+        {
+          title: "用户名",
+          key: "name"
+        },
+        {
+          title: "用户状态",
+          key: "status",
+          render: (h, params) => {
+            const row = params.row;
+            const color = row.status ? "primary" : "error";
+            const text = row.status ? "正常" : "封停";
+            return h(
+              "Tag",
+              {
+                props: {
+                  type: "dot",
+                  color: color
+                }
+              },
+              text
+            );
+          }
+        },
+        {
+          title: "年龄",
+          key: "age"
+        },
+        {
+          title: "角色",
+          key: "role"
+        },
+        {
+          title: "联系方式",
+          key: "telephone"
+        },
+        {
+          title: "邮箱",
+          key: "mail"
+        },
+        {
+          title: "Action",
+          key: "action",
+          width: 150,
+          align: "center",
+          render: (h, params) => {
+            return h("div", [
+              h(
+                "Button",
+                {
+                  props: {
+                    type: "primary",
+                    size: "small"
+                  },
+                  style: {
+                    marginRight: "5px"
+                  },
+                  on: {
+                    click: () => {
+                      this.showUser(params.index);
+                    }
+                  }
+                },
+                "View"
+              ),
+              h(
+                "Button",
+                {
+                  props: {
+                    type: "error",
+                    size: "small"
+                  },
+                  on: {
+                    click: () => {
+                      this.remove(params.index);
+                    }
+                  }
+                },
+                "Delete"
+              )
+            ]);
+          }
+        }
+      ];
+      let sendData = {
+        user_id: sessionStorage.getItem("_id")
+      };
+      if (!this.tableData.length) {
+        this.$http
+          .post("http://localhost:3000/alluser", sendData)
+          .then(data => {
+            if (data.body.status === 0) {
+              data.body.data.forEach(user => {
+                this.users.push({
+                  name: user.username,
+                  status: !user.userStop,
+                  age: user.age,
+                  role: user.userAdmin ? "管理员" : "用户",
+                  telephone: user.userPhone,
+                  mail: user.userMail
+                });
+              });
             }
-          ],
-          time: Math.floor(Math.random() * 7 + 1),
-          update: new Date()
-        });
+          });
       }
-      return data;
+      this.tableData = this.users;
     },
-    formatDate(date) {
-      const y = date.getFullYear();
-      let m = date.getMonth() + 1;
-      m = m < 10 ? "0" + m : m;
-      let d = date.getDate();
-      d = d < 10 ? "0" + d : d;
-      return y + "-" + m + "-" + d;
+    ManageMovie() {
+      this.tableData = this.movies;
+      this.tableColumns = [
+        {
+          title: "电影名称",
+          key: "movieName"
+        },
+        {
+          title: "电影原名",
+          key: "movieOriginalTitle"
+        },
+        {
+          title: "上映时间",
+          key: "movieTime"
+        },
+        {
+          title: "电影分类",
+          key: "genres"
+        },
+        {
+          title: "电影导演",
+          key: "movieDirectors"
+        },
+        {
+          title: "点赞数",
+          key: "movieNumSuppose"
+        },
+        {
+          title: "Action",
+          key: "action",
+          width: 150,
+          align: "center",
+          render: (h, params) => {
+            return h("div", [
+              h(
+                "Button",
+                {
+                  props: {
+                    type: "primary",
+                    size: "small"
+                  },
+                  style: {
+                    marginRight: "5px"
+                  },
+                  on: {
+                    click: () => {
+                      this.showUser(params.index);
+                    }
+                  }
+                },
+                "View"
+              ),
+              h(
+                "Button",
+                {
+                  props: {
+                    type: "error",
+                    size: "small"
+                  },
+                  on: {
+                    click: () => {
+                      this.remove(params.index);
+                    }
+                  }
+                },
+                "Delete"
+              )
+            ]);
+          }
+        }
+      ];
+      if (!this.tableData.length) {
+        this.$http.get("http://localhost:3000/movie/list").then(data => {
+          if (data.body.status === 0) {
+            data.body.data.forEach(movie => {
+              this.movies.push({
+                movieName: movie.movieName,
+                movieOriginalTitle: movie.movieOriginalTitle,
+                genres: movie.genres[0],
+                movieDirectors: movie.movieDirectors[0].name,
+                movieTime: movie.movieTime[0],
+                movieNumSuppose: movie.movieNumSuppose
+              });
+            });
+          }
+        });
+        let start = (this.pageIndex - 1) * this.pageNum;
+        let end = this.pageIndex * this.pageNum;
+        this.tableData = this.movies.slice(start, end);
+        console.log(this.tableData);
+      }
     },
-    changePage() {
-      // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
-      this.tableData1 = this.mockTableData1();
-    },
-    show(index) {
+    ManageComment() {},
+    ManageNews() {},
+    showUser(index) {
       this.$Modal.info({
         title: "User Info",
-        content: `Name：${this.tableData1[index].name}<br>Age：${this.tableData1[index].age}<br>Address：${this.tableData1[index].address}`
+        content: `${this.tableColumns[0].title}：${this.tableData[index].name}<br><br>${this.tableColumns[2].title}：${this.tableData[index].age}<br><br>${this.tableColumns[3].title}：${this.tableData[index].role}<br><br>${this.tableColumns[4].title}：${this.tableData[index].telephone}<br><br>${this.tableColumns[5].title}：${this.tableData[index].mail}`
       });
     },
     remove(index) {
-      this.tableData1.splice(index, 1);
+      this.tableData.splice(index, 1);
+    },
+    changePage(value) {
+      this.pageIndex = value;
+      let start = (value - 1) * this.pageNum;
+      let end = value * this.pageNum;
+      this.tableData = this.movies.splice(start, end);
     }
   }
 };

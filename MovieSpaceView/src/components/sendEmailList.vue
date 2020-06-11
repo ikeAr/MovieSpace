@@ -6,7 +6,7 @@
         <Menu active-name="1-2" theme="light" width="auto" :class="menuitemClasses">
           <div v-for="(item,index) in send_items" :key="index">
             <MenuItem :name="index" @click.native="shouEmailDetail(item)">
-              <div>{{receviver}}{{item.toUser}}</div>
+              <div>{{receviver}}{{item.toUserName}}</div>
               <div>{{emailTitle}}{{item.title}}</div>
             </MenuItem>
           </div>
@@ -15,7 +15,7 @@
       <Layout>
         <Content :style="{margin: '20px', background: '#fff', minHeight: '100%'}">
           <div style="width: 30%">
-            <i-input type="text" disabled :placeholder="emailDetail.toUser">
+            <i-input type="text" disabled :placeholder="emailDetail.toUserName">
               <Icon type="ios-person-outline" slot="prepend"></Icon>
               <span slot="prepend" :style="{padding:'10px'}">{{receviver}}</span>
             </i-input>
@@ -40,14 +40,14 @@ export default {
   data() {
     return {
       send_items: [
-        { toUser: "111", title: "111", context: "111" },
-        { toUser: "222", title: "222", context: "222" },
-        { toUser: "333", title: "333", context: "333" },
-        { toUser: "333", title: "333", context: "333" },
-        { toUser: "333", title: "333", context: "333" },
-        { toUser: "333", title: "333", context: "333" },
-        { toUser: "333", title: "333", context: "333" },
-        { toUser: "333", title: "333", context: "333" }
+        // { toUser: "111", title: "111", context: "111" },
+        // { toUser: "222", title: "222", context: "222" },
+        // { toUser: "333", title: "333", context: "333" },
+        // { toUser: "333", title: "333", context: "333" },
+        // { toUser: "333", title: "333", context: "333" },
+        // { toUser: "333", title: "333", context: "333" },
+        // { toUser: "333", title: "333", context: "333" },
+        // { toUser: "333", title: "333", context: "333" }
       ],
       detail: [],
       alertShow: false,
@@ -58,33 +58,29 @@ export default {
     };
   },
   created() {
-    // let userId = sessionStorage._id;
-    // let send_data = {
-    //   token: sessionStorage.token,
-    //   user_id: sessionStorage._id,
-    //   receive: 0
-    // };
-    // let receive_data = {
-    //   token: sessionStorage.token,
-    //   user_id: sessionStorage._id,
-    //   receive: 1
-    // };
-    // if (userId) {
-    //   this.$http
-    //     .post("http://localhost:3000/users/showEmail", send_data)
-    //     .then(data => {
-    //       if (data.body.status == 1) {
-    //         this.alertMessage = data.body.message;
-    //         this.alertShow = true;
-    //       } else {
-    //         this.send_items = data.body.data;
-    //       }
-    //       console.log(data.body.data);
-    //     });
-    // } else {
-    //   this.alertMessage = "用户信息错误";
-    //   this.alertShow = true;
-    // }
+    let userId = sessionStorage._id;
+    let send_data = {
+      token: sessionStorage.token,
+      user_id: sessionStorage._id,
+      receive: 1
+    };
+    if (userId) {
+      this.$http
+        .post("http://localhost:3000/users/showEmail", send_data)
+        .then(data => {
+          if (data.body.status == 1) {
+            this.alertMessage = data.body.message;
+            this.alertShow = true;
+          } else {
+            console.log(data.body.data);
+            this.send_items = data.body.data;
+          }
+          console.log(data.body.data);
+        });
+    } else {
+      this.alertMessage = "用户信息错误";
+      this.alertShow = true;
+    }
   },
   computed: {
     menuitemClasses: function() {
