@@ -32,7 +32,7 @@
           <div style="margin: 10px;overflow: hidden">
             <div style="float: right;">
               <Page
-                :total="200"
+                :total="movies.length"
                 :current="pageIndex"
                 :page-size="pageNum"
                 show-elevator
@@ -59,9 +59,74 @@ export default {
       tableData: [],
       tableColumns: [],
       users: [],
-      movies: [],
+      movies: [
+        {
+          movieName: "1",
+          movieOriginalTitle: "123",
+          genres: "123",
+          movieDirectors: "123",
+          movieTime: "123",
+          movieNumSuppose: 12
+        },
+        {
+          movieName: "2",
+          movieOriginalTitle: "123",
+          genres: "123",
+          movieDirectors: "123",
+          movieTime: "123",
+          movieNumSuppose: 12
+        },
+        {
+          movieName: "3",
+          movieOriginalTitle: "123",
+          genres: "123",
+          movieDirectors: "123",
+          movieTime: "123",
+          movieNumSuppose: 12
+        },
+        {
+          movieName: "4",
+          movieOriginalTitle: "123",
+          genres: "123",
+          movieDirectors: "123",
+          movieTime: "123",
+          movieNumSuppose: 12
+        },
+        {
+          movieName: "5",
+          movieOriginalTitle: "123",
+          genres: "123",
+          movieDirectors: "123",
+          movieTime: "123",
+          movieNumSuppose: 12
+        },
+        {
+          movieName: "6",
+          movieOriginalTitle: "123",
+          genres: "123",
+          movieDirectors: "123",
+          movieTime: "123",
+          movieNumSuppose: 12
+        },
+        {
+          movieName: "7",
+          movieOriginalTitle: "123",
+          genres: "123",
+          movieDirectors: "123",
+          movieTime: "123",
+          movieNumSuppose: 12
+        },
+        {
+          movieName: "8",
+          movieOriginalTitle: "123",
+          genres: "123",
+          movieDirectors: "123",
+          movieTime: "123",
+          movieNumSuppose: 12
+        }
+      ],
       pageIndex: 1,
-      pageNum: 20
+      pageNum: 2
     };
   },
   computed: {
@@ -299,25 +364,28 @@ export default {
         }
       ];
       if (!this.tableData.length) {
-        this.$http.get("http://localhost:3000/movie/list").then(data => {
-          if (data.body.status === 0) {
-            data.body.data.forEach(movie => {
-              this.movies.push({
-                movieName: movie.movieName,
-                movieOriginalTitle: movie.movieOriginalTitle,
-                genres: movie.genres[0],
-                movieDirectors: movie.movieDirectors[0].name,
-                movieTime: movie.movieTime[0],
-                movieNumSuppose: movie.movieNumSuppose
-              });
-            });
-          }
-        });
-        let start = (this.pageIndex - 1) * this.pageNum;
-        let end = this.pageIndex * this.pageNum;
-        this.tableData = this.movies.slice(start, end);
-        console.log(this.tableData);
+        // this.$http.get("http://localhost:3000/movie/list").then(data => {
+        //   if (data.body.status === 0) {
+        //     data.body.data.forEach(movie => {
+        //       this.movies.push({
+        //         movieName: movie.movieName,
+        //         movieOriginalTitle: movie.movieOriginalTitle,
+        //         genres: movie.genres[0],
+        //         movieDirectors: movie.movieDirectors[0].name,
+        //         movieTime: movie.movieTime[0],
+        //         movieNumSuppose: movie.movieNumSuppose
+        //       });
+        //     });
+        //   }
+        // });
+        // let start = (this.pageIndex - 1) * this.pageNum;
+        // let end = this.pageIndex * this.pageNum;
+        // this.tableData = this.movies.slice(start, end);
+        // console.log(this.tableData);
       }
+      let start = (this.pageIndex - 1) * this.pageNum;
+      let end = this.pageIndex * this.pageNum;
+      this.tableData = this.movies.slice(start, end);
     },
     ManageComment() {},
     ManageNews() {},
@@ -334,7 +402,9 @@ export default {
       this.pageIndex = value;
       let start = (value - 1) * this.pageNum;
       let end = value * this.pageNum;
-      this.tableData = this.movies.splice(start, end);
+      console.log(start + " " + end);
+      console.log(this.movies);
+      this.tableData = this.movies.slice(start, end);
     }
   }
 };

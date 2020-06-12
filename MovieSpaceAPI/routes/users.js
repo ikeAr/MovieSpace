@@ -101,7 +101,7 @@ router.post('/register', function (req, res, next) {
 
 });
 
-router.post('/postCommment', function (req, res, next) {
+router.post('/postComment', function (req, res, next) {
     if (!req.body.username) {
         var username = "匿名用户"
     }

@@ -19,159 +19,159 @@ Vue.use(Router)
 Vue.use(VueResource)
 Vue.http.options.emulateJSON = true
 const routes = [{
-    path: '/',
-    component: resolve => require(['../pages/index'], resolve),
-    meta: {
-      title: 'home',
-      roles: ['User']
-    }
-  },
-  {
-    path: '/movieDetail',
-    component: MovieDetail,
-    meta: {
-      title: 'movieDetail',
-      roles: ['User']
-    }
-  },
-  {
-    path: '/newDetail',
-    component: NewDetail,
-    meta: {
-      title: 'newDetail',
-      roles: ['User']
-    }
-  },
-  {
-    path: '/movieList',
-    component: MovieList,
-    meta: {
-      title: 'movieList',
-      roles: ['User']
-    }
-  },
-  {
-    path: '/loginPage',
-    component: LoginPage,
-    meta: {
-      title: 'Login',
-      roles: ['User', 'Admin']
-    }
-  },
-  {
-    path: '/userInfo',
-    component: UserInfo
-  },
-  {
-    path: '/register',
-    component: RegisterPage,
-    meta: {
-      title: 'register',
-      roles: ['User']
-    }
-  },
-  {
-    path: '/findPassword',
-    component: FindPasswordPage,
-    meta: {
-      title: 'findPassword',
-      roles: ['User']
-    }
-  },
-  {
-    path: '/sendEmail',
-    component: SendEmail,
-    meta: {
-      title: 'sendEmail',
-      roles: ['User']
-    }
-  },
-  {
-    path: '/userManage',
-    component: UserManage,
-    meta: {
-      title: 'userManage',
-      roles: ['Admin']
-    }
-  },
-  {
-    path: '/newsManage',
-    component: NewsManage,
-    meta: {
-      title: 'newsManage',
-      roles: ['Admin']
-    }
-  },
-  {
-    path: '/movieManage',
-    component: MovieManage,
-    meta: {
-      title: 'movieManage',
-      roles: ['Admin']
-    }
-  },
-  {
-    path: '/401',
-    component: NoAuth,
-    meta: {
-      title: '401',
-      roles: ['Admin', 'User']
-    }
-  }, {
-    path: '/admin',
-    component: Admin,
-    meta: {
-      title: '401',
-      roles: ['Admin', 'User']
-    }
+  path: '/',
+  component: resolve => require(['../pages/index'], resolve),
+  meta: {
+    title: 'home',
+    roles: ['User']
   }
+},
+{
+  path: '/movieDetail',
+  component: MovieDetail,
+  meta: {
+    title: 'movieDetail',
+    roles: ['User']
+  }
+},
+{
+  path: '/newDetail',
+  component: NewDetail,
+  meta: {
+    title: 'newDetail',
+    roles: ['User']
+  }
+},
+{
+  path: '/movieList',
+  name: 'movieList',
+  component: MovieList,
+  meta: {
+    title: 'movieList',
+    roles: ['User']
+  }
+},
+{
+  path: '/loginPage',
+  name: 'loginPage',
+  component: LoginPage,
+  meta: {
+    title: 'Login',
+    roles: ['User', 'Admin']
+  }
+},
+{
+  path: '/userInfo',
+  component: UserInfo
+},
+{
+  path: '/register',
+  component: RegisterPage,
+  meta: {
+    title: 'register',
+    roles: ['User']
+  }
+},
+{
+  path: '/findPassword',
+  component: FindPasswordPage,
+  meta: {
+    title: 'findPassword',
+    roles: ['User']
+  }
+},
+{
+  path: '/sendEmail',
+  component: SendEmail,
+  meta: {
+    title: 'sendEmail',
+    roles: ['User']
+  }
+},
+{
+  path: '/userManage',
+  component: UserManage,
+  meta: {
+    title: 'userManage',
+    roles: ['Admin']
+  }
+},
+{
+  path: '/newsManage',
+  component: NewsManage,
+  meta: {
+    title: 'newsManage',
+    roles: ['Admin']
+  }
+},
+{
+  path: '/movieManage',
+  component: MovieManage,
+  meta: {
+    title: 'movieManage',
+    roles: ['Admin']
+  }
+},
+{
+  path: '/401',
+  component: NoAuth,
+  meta: {
+    title: '401',
+    roles: ['Admin', 'User']
+  }
+}, {
+  path: '/admin',
+  component: Admin,
+  meta: {
+    title: '401',
+    roles: ['Admin', 'User']
+  }
+}
 ]
 const router = new Router({
   mode: "history",
   routes
 })
-// router.beforeEach((to, from, next) => {
-//   if (!to.path === "/") {
-//     if (sessionStorage.getItem("token")) {
-//       if (to.path === '/login') {
-//         next({
-//           path: '/'
-//         });
-//       } else if (to.meta.roles) {
-//         if (sessionStorage.getItem("_id")) {
-//           this.$http.post("http://localhost:3000/showUser", {
-//             user_id: sessionStorage.getItem("_id")
-//           }).then(($findUser) => {
-//             const auth = $findUser.isUserAdmin ? "Admin" : "User";
-//             if (to.meta.roles.includes(auth)) {
-//               next();
-//             } else {
-//               next({
-//                 replace: true,
-//                 name: "/401"
-//               })
-//             }
-//           })
-//         } else {
-//           next({
-//             replace: true,
-//             name: "/401"
-//           })
-//         }
-//       } else {
-//         next({
-//           replace: true,
-//           name: "/404"
-//         });
-//       }
-//     } else {
-//       next({
-//         replace: true,
-//         name: "/loginPage"
-//       });
-//     }
-//   } else {
-//     next();
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  // console.log(to.path==="/loginPage")
+  const outerPaths = ["/", "/loginPage"];
+  if (!sessionStorage.getItem("token") && !outerPaths.includes(to.path)) {
+    console.log("hello");
+    if (to.path === '/login') {
+      next({
+        path: '/'
+      });
+    } else if (to.meta.roles) {
+      console.log("hello111");
+      if (sessionStorage.getItem("_id")) {
+        console.log("hello222");
+        this.$http.post("http://localhost:3000/showUser", {
+          user_id: sessionStorage.getItem("_id")
+        }).then(($findUser) => {
+          const auth = $findUser.isUserAdmin ? "Admin" : "User";
+          if (to.meta.roles.includes(auth)) {
+            next();
+          } else {
+            next({
+              replace: true,
+              name: "/401"
+            })
+          }
+        })
+      } else {
+        next({
+          replace: true,
+          name: "/401"
+        })
+      }
+    } else {
+      next({
+        replace: true,
+        name: "/404"
+      });
+    }
+  } else {
+    next();
+  }
+})
 export default router;
