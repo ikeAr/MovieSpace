@@ -32,8 +32,8 @@
           <div style="margin: 10px;overflow: hidden">
             <div style="float: right;">
               <Page
-                :total="movies.length"
-                :current="pageIndex"
+                :total.sync="totalNumber"
+                :current.sync="pageIndex"
                 :page-size="pageNum"
                 show-elevator
                 @on-change="changePage"
@@ -53,80 +53,17 @@ import MovieIndexHeader from "../components/MovieIndexHeader";
 export default {
   data() {
     return {
+      totalItem: [],
       isCollapsed: false,
       alertShow: false,
       alertMessage: "",
       tableData: [],
       tableColumns: [],
       users: [],
-      movies: [
-        {
-          movieName: "1",
-          movieOriginalTitle: "123",
-          genres: "123",
-          movieDirectors: "123",
-          movieTime: "123",
-          movieNumSuppose: 12
-        },
-        {
-          movieName: "2",
-          movieOriginalTitle: "123",
-          genres: "123",
-          movieDirectors: "123",
-          movieTime: "123",
-          movieNumSuppose: 12
-        },
-        {
-          movieName: "3",
-          movieOriginalTitle: "123",
-          genres: "123",
-          movieDirectors: "123",
-          movieTime: "123",
-          movieNumSuppose: 12
-        },
-        {
-          movieName: "4",
-          movieOriginalTitle: "123",
-          genres: "123",
-          movieDirectors: "123",
-          movieTime: "123",
-          movieNumSuppose: 12
-        },
-        {
-          movieName: "5",
-          movieOriginalTitle: "123",
-          genres: "123",
-          movieDirectors: "123",
-          movieTime: "123",
-          movieNumSuppose: 12
-        },
-        {
-          movieName: "6",
-          movieOriginalTitle: "123",
-          genres: "123",
-          movieDirectors: "123",
-          movieTime: "123",
-          movieNumSuppose: 12
-        },
-        {
-          movieName: "7",
-          movieOriginalTitle: "123",
-          genres: "123",
-          movieDirectors: "123",
-          movieTime: "123",
-          movieNumSuppose: 12
-        },
-        {
-          movieName: "8",
-          movieOriginalTitle: "123",
-          genres: "123",
-          movieDirectors: "123",
-          movieTime: "123",
-          movieNumSuppose: 12
-        }
-      ],
+      movies: [],
       pageIndex: 1,
-      pageNum: 2
+      pageNum: 10,
+      totalNumber: 0
     };
   },
   computed: {
@@ -156,7 +93,8 @@ export default {
               movieDirectors: item.directors,
               movieActors: item.casts,
               movie_id: item.id,
-              movieOriginalTitle: item.original_title
+              movieOriginalTitle: item.original_title,
+              rate:item.average
             };
             acquiredMovie.push(movie);
           }
@@ -183,8 +121,7 @@ export default {
             });
         });
     },
-    ManageUser() {
-      this.tableData = this.users;
+    ManageUser: async function() {
       this.tableColumns = [
         {
           title: "用户名",
@@ -273,7 +210,7 @@ export default {
         user_id: sessionStorage.getItem("_id")
       };
       if (!this.tableData.length) {
-        this.$http
+        await this.$http
           .post("http://localhost:3000/alluser", sendData)
           .then(data => {
             if (data.body.status === 0) {
@@ -287,13 +224,17 @@ export default {
                   mail: user.userMail
                 });
               });
+              this.totalItem = this.users;
+              this.totalNumber = this.users.length;
             }
           });
       }
-      this.tableData = this.users;
+      let start = (this.pageIndex - 1) * this.pageNum;
+      let end = this.pageIndex * this.pageNum;
+      this.tableData = this.users.slice(start, end);
+      this.totalItem = 0;
     },
-    ManageMovie() {
-      this.tableData = this.movies;
+    ManageMovie: async function() {
       this.tableColumns = [
         {
           title: "电影名称",
@@ -364,28 +305,27 @@ export default {
         }
       ];
       if (!this.tableData.length) {
-        // this.$http.get("http://localhost:3000/movie/list").then(data => {
-        //   if (data.body.status === 0) {
-        //     data.body.data.forEach(movie => {
-        //       this.movies.push({
-        //         movieName: movie.movieName,
-        //         movieOriginalTitle: movie.movieOriginalTitle,
-        //         genres: movie.genres[0],
-        //         movieDirectors: movie.movieDirectors[0].name,
-        //         movieTime: movie.movieTime[0],
-        //         movieNumSuppose: movie.movieNumSuppose
-        //       });
-        //     });
-        //   }
-        // });
-        // let start = (this.pageIndex - 1) * this.pageNum;
-        // let end = this.pageIndex * this.pageNum;
-        // this.tableData = this.movies.slice(start, end);
-        // console.log(this.tableData);
+        await this.$http.get("http://localhost:3000/movie/list").then(data => {
+          if (data.body.status === 0) {
+            data.body.data.forEach(movie => {
+              this.movies.push({
+                movieName: movie.movieName,
+                movieOriginalTitle: movie.movieOriginalTitle,
+                genres: movie.genres[0],
+                movieDirectors: movie.movieDirectors[0].name,
+                movieTime: movie.movieTime[0],
+                movieNumSuppose: movie.movieNumSuppose
+              });
+            });
+            this.totalItem = this.movies;
+            this.totalNumber = this.movies.length;
+          }
+        });
       }
       let start = (this.pageIndex - 1) * this.pageNum;
       let end = this.pageIndex * this.pageNum;
       this.tableData = this.movies.slice(start, end);
+      this.totalItem = 0;
     },
     ManageComment() {},
     ManageNews() {},
@@ -402,9 +342,7 @@ export default {
       this.pageIndex = value;
       let start = (value - 1) * this.pageNum;
       let end = value * this.pageNum;
-      console.log(start + " " + end);
-      console.log(this.movies);
-      this.tableData = this.movies.slice(start, end);
+      this.tableData = this.totalItem.slice(start, end);
     }
   }
 };

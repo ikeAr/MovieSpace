@@ -11,6 +11,13 @@
           <Icon type="ios-people"></Icon>电影
         </MenuItem>
       </router-link>
+      <div v-show="isShowManage">
+        <router-link to="/admin">
+          <MenuItem name="2">
+            <Icon type="ios-people"></Icon>管理
+          </MenuItem>
+        </router-link>
+      </div>
       <div v-if="!isLogin">
         <router-link to="/loginPage">
           <MenuItem name="3" class="login">登录</MenuItem>
@@ -101,7 +108,8 @@ export default {
       password: "",
       repassword: "",
       alertShow: false,
-      alertMessage: ""
+      alertMessage: "",
+      isShowManage: false
     };
   },
   components: {
@@ -130,6 +138,11 @@ export default {
             }
             console.log(data.body.data);
           });
+        if (sessionStorage.getItem("isAdmin") == "true") {
+          this.isShowManage = true;
+          console.log("#############");
+          console.log(sessionStorage.getItem("isAdmin"));
+        }
       } else {
         this.alertMessage = "用户信息错误，请重新登陆";
         this.alertShow = true;
@@ -184,7 +197,7 @@ export default {
 </script>
 <style lang="css" scoped>
 .login {
-  margin-left: 1530px;
+  margin-left: 1040px;
 }
 .demo-drawer-footer {
   width: 100%;

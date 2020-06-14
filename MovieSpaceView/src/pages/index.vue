@@ -13,26 +13,45 @@
     <i-col span="11" offset="1">
     <!--使用card组件-->
       <Card>
-        <p slot="title">
+        <p class="cardTitle" slot="title">
             <Icon type="ios-film-outline"></Icon>
             推荐电影
         </p>
-          <ul class="cont-ul">
-            <movies-list v-for="item in movieItems" :key="item._id" :id="item._id" :movieName="item.movieName" :movieTime="item.movieTime"></movies-list><!--引入MovieList-->
-          </ul>
-      </Card>
+        <div>
+        <Row >
+          <Col span="8"  v-for="item in movieItems" :key="item._id" >
+            <movies-list 
+              :id="item._id" 
+              :movieName="item.movieName" 
+              :movieTime="item.movieTime[0]" 
+              :movieImage="item.movieImg"
+              :movieOriginalTitle="item.movieOriginalTitle"
+              :movieActors="item.movieActors">
+            </movies-list>
+          </Col>
+        </Row>
+     </div> 
+    </Card>
     </i-col>
     <i-col span="10" offset="1">
     <!--使用card组件-->
       <Card>
-        <p slot="title">
+        <p class="cardTitle" slot="title">
             <Icon type="edit"></Icon>
-            热点新闻
+            即将上映
         </p>
-          <ul class="cont-ul">
-            <!-- list组件展示区，并用v-for来将数据遍历，:xx="xxx" 是用来给子组件传递数据的 -->
-            <news-list v-for="item in newsItems" :key="item._id" :id="item._id"  :articleTitle="item.articleTitle" :articleTime="item.articleTime"></news-list>
-          </ul>
+       <Row >
+          <Col span="10"  v-for="item in newsItems"  :key="item.id" >
+            <movies-list 
+              :id="item.id" 
+              :movieName="item.title" 
+              :movieTime="item.mainland_pubdate" 
+              :movieImage="item.images.small"
+              :movieOriginalTitle="item.original_title"
+              :movieActors="item.casts">
+            </movies-list>
+          </Col>
+        </Row>
       </Card>
     </i-col>
 </Row>
@@ -73,14 +92,14 @@ export default {
       console.log(data.body.data);
     });
     //    获取新闻
-    this.$http.get("http://localhost:3000/showArticle").then(data => {
-      this.newsItems = data.body.data;
-      console.log(data.body);
+    this.$http.jsonp("https://api.douban.com/v2/movie/coming_soon?apikey=0df993c66c0c636e29ecbb5344252a4a").then(data => {
+      this.newsItems = data.body.subjects;
+      console.log(this.newsItems);
     });
     //    获取所有电影
     this.$http.get("http://localhost:3000/showRanking").then(data => {
       this.movieItems = data.body.data;
-      console.log(data.body);
+      console.log(this.movieItems);
     });
   },
   ready() {}
@@ -107,11 +126,14 @@ export default {
   padding-top: 0.5rem;
   background-color: #fff;
 }
-.cont-ul::after {
+.cardTitle{
+  color: blue;
+}
+/* .cont-ul::after {
   content: "";
   display: block;
   clear: both;
   width: 0;
   height: 0;
-}
+} */
 </style>

@@ -13,7 +13,8 @@ var movie = new mongoose.Schema({
     movieActors: [],
     genres: [],
     movie_id: String,
-    movieOriginalTitle: String
+    movieOriginalTitle: String,
+    rate: String
 })
 //使用statics为对象添加方法
 // movie.statics.finds = function (conditions,callBack) {

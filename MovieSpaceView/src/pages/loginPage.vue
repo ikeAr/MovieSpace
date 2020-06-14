@@ -21,9 +21,9 @@
     </div>
   </div>
   <div  class="box">
-    <i-button type="primary" v-on:click=userLogin()>账号登录</i-button>
-    <i-button type="secondary" style="margin-left: 10px" v-on:click=userRegister()>注册</i-button>
-    <i-button type="text" style="margin-left: 10px" v-on:click=findBackPassword()>忘记密码</i-button>
+    <Button type="primary" v-on:click=userLogin()>账号登录</Button>
+    <Button type="secondary" style="margin-left: 10px" v-on:click=userRegister()>注册</Button>
+    <Button type="text" style="margin-left: 10px" v-on:click=findBackPassword()>忘记密码</Button>
   </div>
   </div>
 </div>
@@ -42,8 +42,8 @@ export default {
       alertShow: false,
       alertMessage: "",
       container: {
-        width: "1920px",
-        height: "937px",
+        width: "100%",
+        height: "722px",
         backgroundImage: "url(" + require("../assets/OIP.jpg") + ")",
         backgroundRepeat: "no-repeat",
         backgroundSize: "100%"
@@ -65,14 +65,15 @@ export default {
             this.alertMessage = data.body.message;
             this.alertShow = true;
           } else {
-            let save_token = {
-              token: data.body.data.token,
-              username: this.username
-            };
             sessionStorage.setItem("token", data.body.data.token);
             sessionStorage.setItem("username", data.body.data.user[0].username);
             sessionStorage.setItem("_id", data.body.data.user[0]._id);
-            this.$router.push({path:"/"});
+            sessionStorage.setItem("isAdmin", data.body.data.user[0].userAdmin);
+            if (data.body.data.user[0].userAdmin) {
+              this.$router.push({ path: "/admin" });
+            } else {
+              this.$router.push({ path: "/" });
+            }
           }
         });
     },

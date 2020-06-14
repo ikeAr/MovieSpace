@@ -57,7 +57,7 @@ router.post('/detail', function (req, res, next) {
                 status: 0,
                 message: '获取成功',
                 data: getMovie
-            })
+            });
         })
     } else {
         res.json({
@@ -76,7 +76,6 @@ router.post('/comment', function (req, res, next) {
                 data: getComment
             })
         })
-
     } else {
         res.json({
             status: 1,
@@ -126,8 +125,8 @@ router.post('/getIndexMovie', function (req, res, next) {
 
 //获取一个电影的评论
 router.post('/getMovieComment', function (req, res, next) {
-    if (req.body.id) {
-        comment.findByMovieId(req.body.id, function (err, allComment) {
+    if (req.body.username) {
+        comment.findByUsername(req.body.username, function (err, allComment) {
             res.json({
                 status: 0,
                 message: '获取成功',

@@ -5,7 +5,7 @@
   </div>
   <div class="registerPage" :style ="registerPage">
     <div class="box" > 
-      <div style="width: 30%;padding-top: 10%">
+      <div style="width: 30%;padding-top: 5%">
         <label class="registerHeader" :style="registerHeader">Register</label>
           <div class="box">
             <i-input type="text" v-model="username" placeholder="用户名">
@@ -65,8 +65,8 @@ export default {
       userPhone: "",
       rePassword: "",
       registerPage: {
-        width: "1920px",
-        height: "877px",
+        width: "100%",
+        height: "662px",
         backgroundImage: "url(" + require("../assets/register.jpg") + ")",
         backgroundRepeat: "no-repeat",
         backgroundSize: "100%"
@@ -119,6 +119,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 30px;
+  padding-top: 20px;
 }
 </style>

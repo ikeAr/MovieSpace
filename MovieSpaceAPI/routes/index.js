@@ -29,7 +29,7 @@ router.get('/showRanking', function (req, res, next) {
     }, function (err, getMovies) {
         res.json({
             status: 0,
-            message: "获取主页",
+            message: "获取推荐电影",
             data: getMovies
         })
     })

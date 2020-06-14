@@ -6,13 +6,13 @@
         </div>
         <div class="movieTitle">
         <router-link :to="{path: '/movieDetail', query:{ id: id }}" class="goods-list-link">
-          {{movieName}}&#8194|&#8194{{movieOriginalTitle}} 
+          {{movieName}}
           <div class="movieTime">{{movieTime}}</div>
-          <div class="movieActors" v-for="movieActor in movieActors">{{movieActor.name}}&#8194&#8194</div>
+          <div class="movieActors">{{movieActors[0].name}}</div>
         </router-link>   
       </div>
     </div>
-     <div class="clearFloat"></div>
+     
   </div>
 </template>
 <script>
@@ -23,38 +23,27 @@ export default {
     movieTime: String,
     movieImage: String,
     movieOriginalTitle: String,
-    movieActors: [],
+    movieActors: []
   }
 };
 </script>
 <style lang="css" scoped>
-.movieImg,
-.movieTitle {
-  font-size: 20px;
-}
-.movieTime {
-  text-align: left;
-}
 img {
-  width: 90%;
-  height: 90%;
+  width: 60%;
+  height: 15vw;
+  margin-bottom: 10px;
 }
 .singleMovie {
-  margin-top: 50px;
-  display: -webkit-box;
-  float: left;
-}
-.clearFloat {
-  clear: both;
+  width:256px;
+  height: 318px;
+  margin-top: 20px;
 }
 .movieList {
-  width: 100%;
-  height: 100%;
   padding: 5px;
   border-bottom: 1px dashed #ababab;
 }
-.movieActors{
-  text-align: left;
+.movieTime .movieActors {
+  text-align: center;
   font-size: 15px;
-} 
+}
 </style>

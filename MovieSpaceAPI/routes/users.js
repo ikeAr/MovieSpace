@@ -117,12 +117,12 @@ router.post('/postComment', function (req, res, next) {
             message: "评论内容为空"
         })
     }
-
     var saveComment = new comment({
         movie_id: req.body.movie_id,
         username: req.body.username ? req.body.username : username,
         context: req.body.context,
-        check: 0
+        check: req.body.check,
+        movieGrade: req.body.movieGrade
     })
     saveComment.save(function (err) {
         if (err) {

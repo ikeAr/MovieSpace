@@ -11,21 +11,19 @@
     </div>
     <div class="contentMain">
       <div>
-        <div class="contentLeft">
-          <ul class="cont-ul">
-            <movies-list 
-              v-for="item in dataShow" 
-              :key="item._id" 
-              :id="item._id" 
-              :movieName="item.movieName" 
-              :movieTime="item.movieTime[0]" 
-              :movieImage="item.movieImg"
-              :movieOriginalTitle="item.movieOriginalTitle"
-              :movieActors="item.movieActors">
-            </movies-list><!--引入MovieList-->
-          </ul>
-        </div>
-      </div>
+        <Row >
+          <Col span="4"  v-for="item in dataShow" :key="item._id">
+            <movies-list 
+              :id="item._id" 
+              :movieName="item.movieName" 
+              :movieTime="item.movieTime[0]" 
+              :movieImage="item.movieImg"
+              :movieOriginalTitle="item.movieOriginalTitle"
+              :movieActors="item.movieActors">
+            </movies-list>
+          </Col>
+       </Row>
+     </div>     
     </div>
      <div class="primaryButton">
         <i-button type="primary" v-on:click=prePage()>上一页</i-button>
@@ -51,7 +49,7 @@ export default {
       allMovies: [],
       checkedGenres: [],
       totalPage: [],
-      pageSize: 5,
+      pageSize: 36,
       pageNum: 1,
       dataShow: [],
       currentPage: 0,
@@ -78,8 +76,10 @@ export default {
       } else {
         for (let movie of this.allMovies) {
           for (let movieGener of movie.genres) {
-            if (this.checkedGenres.includes(movieGener) && !this.selectedMovies.includes(movie))
-            {
+            if (
+              this.checkedGenres.includes(movieGener) &&
+              !this.selectedMovies.includes(movie)
+            ) {
               this.selectedMovies.push(movie);
             }
           }
