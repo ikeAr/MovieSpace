@@ -83,6 +83,22 @@ router.post('/comment', function (req, res, next) {
         })
     }
 });
+router.post('/allComment', function (req, res, next) {
+    if (req.body.id) {
+        comment.findAll(function (err, getComment) {
+            res.json({
+                status: 0,
+                message: '获取成功',
+                data: getComment
+            })
+        })
+    } else {
+        res.json({
+            status: 1,
+            message: '获取失败'
+        })
+    }
+});
 
 router.post('/showNumber', function (req, res, next) {
     if (req.body.id) {

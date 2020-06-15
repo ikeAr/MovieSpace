@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Menu mode="horizontal" theme="dark" active-name="1">
+    <Menu mode="horizontal" theme="dark">
       <router-link to="/">
         <MenuItem name="1">
           <Icon type="ios-paper"></Icon>主页
@@ -18,7 +18,7 @@
           </MenuItem>
         </router-link>
       </div>
-      <div v-if="!isLogin">
+      <div v-if="!isLogin" test-id="login">
         <router-link to="/loginPage">
           <MenuItem name="3" class="login">登录</MenuItem>
         </router-link>
@@ -50,7 +50,6 @@
       <div>
         <div class="box">用户状态：{{userStatus}}</div>
       </div>
-      <Divider />
       <div style="height:20px"></div>
       <Button type="ghost" @click="ShowChangeUserPassword()">修改密码</Button>
       <router-link to="/sendEmail">

@@ -43,18 +43,26 @@ export default {
         title: this.title,
         context: this.context
       };
-      console.log(send_data);
-      this.$http
-        .post("http://localhost:3000/users/sendEmail", send_data)
-        .then(data => {
-          if (data.body.status == 1) {
-            this.alertMessage = data.body.message;
-            this.alertShow = true;
-          } else {
-            this.alertMessage = "发送成功";
-            this.alertShow = true;
-          }
-        });
+      if (!this.toUserName) {
+        this.alertMessage = "请输入用户名";
+        this.alertShow = true;
+      } else if (!this.title) {
+        this.alertMessage = "请输入主题";
+        this.alertShow = true;
+      } else {
+        this.$http
+          .post("http://localhost:3000/users/sendEmail", send_data)
+          .then(data => {
+            if (data.body.status == 1) {
+              this.alertMessage = data.body.message;
+              this.alertShow = true;
+            } else {
+              this.alertMessage = "发送成功";
+              this.alertShow = true;
+              this.$router.go(0);
+            }
+          });
+      }
     }
   }
 };

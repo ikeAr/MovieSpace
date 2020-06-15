@@ -27,9 +27,6 @@
             <br />
             <Input type="textarea" :rows="4" disabled :placeholder="emailDetail.context" />
           </div>
-          <div class="reply-button">
-            <Button type="ghost" @click="LogOut()">删除</Button>
-          </div>
         </Content>
       </Layout>
     </Layout>

@@ -36,12 +36,12 @@ router.post('/login', function (req, res, next) {
                     token: token_after,
                     user: userSave
                 },
-                message: "用户登录1成功"
+                message: "用户登录成功"
             })
         } else {
             res.json({
                 status: 1,
-                message: "用户名或者密码错误"
+                message: "用户不存在"
             })
         }
     })
@@ -119,6 +119,7 @@ router.post('/postComment', function (req, res, next) {
     }
     var saveComment = new comment({
         movie_id: req.body.movie_id,
+        moviename: req.body.moviename,
         username: req.body.username ? req.body.username : username,
         context: req.body.context,
         check: req.body.check,

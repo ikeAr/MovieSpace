@@ -11,8 +11,7 @@
           <div class="movieActors">{{movieActors[0].name}}</div>
         </router-link>   
       </div>
-    </div>
-     
+    </div>   
   </div>
 </template>
 <script>

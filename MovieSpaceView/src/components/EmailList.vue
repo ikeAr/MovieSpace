@@ -3,9 +3,9 @@
   <div class="layout">
     <Layout>
       <Sider breakpoint="md">
-        <Menu active-name="1-2" theme="primary" width="auto" :class="menuitemClasses">
+        <Menu active-name="1" theme="primary" width="auto" :class="menuitemClasses">
           <div v-for="(item,index) in receive_items" :key="index">
-            <MenuItem :name="index" @click.native="shouEmailDetail(item)">
+            <MenuItem :name="index+1" @click.native="shouEmailDetail(item)">
               <div>{{receviver}}{{item.fromUserName}}</div>
               <div>{{emailTitle}}{{item.title}}</div>
             </MenuItem>
@@ -26,10 +26,6 @@
             </i-input>
             <br />
             <Input type="textarea" :rows="4" disabled :placeholder="emailDetail.context" />
-          </div>
-          <div class="reply-button">
-            <Button type="primary" @click="LogOut()">回复</Button>
-            <Button type="ghost" @click="LogOut()">删除</Button>
           </div>
         </Content>
       </Layout>

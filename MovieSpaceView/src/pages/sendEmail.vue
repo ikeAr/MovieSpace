@@ -6,7 +6,7 @@
     <div class="layout">
       <Layout>
         <Sider breakpoint="md" collapsible :collapsed-width="78" v-model="isCollapsed">
-          <Menu active-name="1-2" theme="dark" width="auto" :class="menuitemClasses">
+          <Menu active-name="1-1" theme="dark" width="auto" :class="menuitemClasses">
             <MenuItem name="1-1">
               <Icon type="ios-mail" />
               <span @click="BuildNewEmail()">新建邮件</span>
@@ -23,7 +23,7 @@
           <div slot="trigger"></div>
         </Sider>
         <Layout>
-          <Content :style="{background: '#fff', minHeight: '593.4px'}">
+          <Content :style="{background: '#fff', minHeight: '612px'}">
             <div v-show="isNewEmail">
               <send-talk-box></send-talk-box>
             </div>

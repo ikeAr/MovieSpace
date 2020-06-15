@@ -15,20 +15,16 @@
           主演：{{detail.movieActors[0].name+" "+detail.movieActors[1].name}}<br/>
           类型：{{detail.genres[0]+" "+detail.genres[1]}}<br/>
           上映日期：{{detail.movieTime[0]+" "+detail.movieTime[1]}}<br/>
-          <ul>
-            <li >
-                <span>
-                    <Icon type="ios-star" color="orange" v-for="n in 4" :key="n"></Icon>
-                    <Icon type="ios-star" color="orange" v-if="detail.rate >= 9.5"></Icon>
-                    <Icon type="ios-star-half" color="orange" v-else></Icon>
-                    {{ detail.rate }}
-                </span>
-            </li>
-            <li @click="support()">
-              <Icon type="ios-star" color="gold">点赞</Icon>
-              {{detail["movieNumSuppose"]}}赞
-            </li>
-        </ul>
+          <span>
+            <Icon type="ios-star" color="orange" v-for="n in 4" :key="n"></Icon>
+            <Icon type="ios-star" color="orange" v-if="detail.rate >= 9.5"></Icon>
+            <Icon type="ios-star-half" color="orange" v-else></Icon>
+             {{ detail.rate }}
+           </span>
+           <div @click="support()">
+            <Icon type="ios-star" color="gold">点赞</Icon>
+            {{detail["movieNumSuppose"]+" "}}赞
+           </div>
         </div>
      </div>
      <div class="movieInfo">
@@ -53,7 +49,7 @@
         </div>
      </div>
      <Divider/>
-      <div class="movieInfo">
+      <div v-show="showRecommended" class="movieInfo">
         <p class="desTitle">
           看过这个电影的其他人还看了：
        </p>
@@ -100,7 +96,7 @@
             </div>
               <Icon type="ios-loop-strong"></Icon>
             <div>
-               <Input v-model="movieCommentContent" maxlength="100" show-word-limit type="textarea" placeholder="Enter something..." style="width: 100%" />
+               <Input v-model="movieCommentContent" show-word-limit type="textarea" placeholder="Enter something..." style="width: 100%" />
             </div>
             <div class="commentFooter">
               <Row :gutter="20">
@@ -153,7 +149,8 @@ export default {
       commentTitle: "看过",
       recommendedMovies: [],
       recommendedUsers: [],
-      recommendedMoviesId: []
+      recommendedMoviesId: [],
+      showRecommended: false
     };
   },
   components: {
@@ -187,10 +184,8 @@ export default {
         }
       });
     // this.recommendedMovies.push(
-    //   JSON.parse(localStorage.getItem("recommendedMovies"))
+    //   // JSON.parse(localStorage.getItem("recommendedMovies"))
     // );
-    console.log("AAAAAAAAAAAAAAA");
-    console.log(JSON.parse(localStorage.getItem("recommendedMovies")));
   },
   methods: {
     support: function(event) {
@@ -235,6 +230,7 @@ export default {
       } else {
         let sendData = {
           movie_id: this.movie_id,
+          moviename: this.detail.movieName,
           username: sessionStorage.getItem("username"),
           movieGrade: this.movieGrade,
           check: this.movieCheck,
@@ -274,33 +270,26 @@ export default {
                         }
                       });
                     }
+                    this.recommendedMoviesId.forEach(recommendedMovieId => {
+                      this.$http
+                        .post("http://localhost:3000/movie/detail", {
+                          id: recommendedMovieId
+                        })
+                        .then(getMovieDetail => {
+                          if (getMovieDetail.body.status === 0) {
+                            this.recommendedMovies.push(
+                              getMovieDetail.body.data
+                            );
+                          }
+                        });
+                    });
                   });
               });
             }
           });
-        console.log("recommendedMovieId");
-        console.log(this.recommendedMoviesId);
-        this.recommendedMoviesId.forEach(recommendedMovieId => {
-          console.log("recommendedMovieId");
-          console.log(recommendedMovieId);
-          this.$http
-            .post("http://localhost:3000/movie/detail", {
-              id: recommendedMovieId
-            })
-            .then(getMovieDetail => {
-              console.log("**************");
-              console.log(getMovieDetail.body);
-              if (getMovieDetail.body.status === 0) {
-                this.recommendedMovies.push(getMovieDetail.body.data);
-              }
-            });
-        });
-        localStorage.setItem(
-          "recommendedMovies",
-          JSON.stringify(this.recommendedMovies)
-        );
         this.$http.post("http://localhost:3000/users/postComment", sendData);
         this.commentCard = false;
+        this.showRecommended = true;
         // this.$router.go(0);
       }
     },
@@ -328,6 +317,7 @@ export default {
 .movieContent .movie-des {
   text-align: left;
   margin-top: 40px;
+  margin-left: 20px;
 }
 .movieInfo {
   margin-top: 30px;

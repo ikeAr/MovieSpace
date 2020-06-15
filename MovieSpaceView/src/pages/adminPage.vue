@@ -5,7 +5,7 @@
     </div>
     <Layout>
       <Sider breakpoint="md" collapsible :collapsed-width="78" v-model="isCollapsed">
-        <Menu active-name="1-2" theme="dark" width="auto" :class="menuitemClasses">
+        <Menu active-name="1-1" theme="dark" width="auto" :class="menuitemClasses">
           <MenuItem name="1-1" @click.native="ManageMovie()">
             <Icon type="ios-videocam" />
             <span>电影管理</span>
@@ -18,10 +18,6 @@
             <Icon type="ios-pricetags" />
             <span>评论管理</span>
           </MenuItem>
-          <MenuItem name="1-4">
-            <Icon type="ios-settings" @click.native="ManageNews()"></Icon>
-            <span>新闻管理</span>
-          </MenuItem>
         </Menu>
         <div slot="trigger"></div>
       </Sider>
@@ -30,10 +26,28 @@
         <Content :style="{margin: '20px', background: '#fff', minHeight: '771.4px'}">
           <Table :data="tableData" :columns="tableColumns" stripe></Table>
           <div style="margin: 10px;overflow: hidden">
-            <div style="float: right;">
+            <div v-show="showMovieTable" style="float: right;">
               <Page
-                :total.sync="totalNumber"
-                :current.sync="pageIndex"
+                :total="movieTotalNumber"
+                :current="pageIndex"
+                :page-size="pageNum"
+                show-elevator
+                @on-change="changePage"
+              ></Page>
+            </div>
+            <div v-show="showUserTable" style="float: right;">
+              <Page
+                :total="userTotalNumber"
+                :current="pageIndex"
+                :page-size="pageNum"
+                show-elevator
+                @on-change="changePage"
+              ></Page>
+            </div>
+            <div v-show="showCommentTable" style="float: right;">
+              <Page
+                :total="commentTotalNumber"
+                :current="pageIndex"
                 :page-size="pageNum"
                 show-elevator
                 @on-change="changePage"
@@ -61,9 +75,15 @@ export default {
       tableColumns: [],
       users: [],
       movies: [],
+      comments: [],
       pageIndex: 1,
       pageNum: 10,
-      totalNumber: 0
+      movieTotalNumber: 0,
+      userTotalNumber: 0,
+      commentTotalNumber: 0,
+      showMovieTable: false,
+      showUserTable: false,
+      showCommentTable: false
     };
   },
   computed: {
@@ -94,7 +114,7 @@ export default {
               movieActors: item.casts,
               movie_id: item.id,
               movieOriginalTitle: item.original_title,
-              rate:item.average
+              rate: item.average
             };
             acquiredMovie.push(movie);
           }
@@ -122,6 +142,9 @@ export default {
         });
     },
     ManageUser: async function() {
+      this.showCommentTable = false;
+      this.showMovieTable = false;
+      this.showUserTable = true;
       this.tableColumns = [
         {
           title: "用户名",
@@ -225,16 +248,18 @@ export default {
                 });
               });
               this.totalItem = this.users;
-              this.totalNumber = this.users.length;
+              this.userTotalNumber = this.users.length;
             }
           });
       }
       let start = (this.pageIndex - 1) * this.pageNum;
       let end = this.pageIndex * this.pageNum;
       this.tableData = this.users.slice(start, end);
-      this.totalItem = 0;
     },
     ManageMovie: async function() {
+      this.showCommentTable = false;
+      this.showUserTable = false;
+      this.showMovieTable = true;
       this.tableColumns = [
         {
           title: "电影名称",
@@ -279,7 +304,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.showUser(params.index);
+                      this.showMovie(params.index);
                     }
                   }
                 },
@@ -318,21 +343,141 @@ export default {
               });
             });
             this.totalItem = this.movies;
-            this.totalNumber = this.movies.length;
+            this.movieTotalNumber = this.movies.length;
           }
         });
       }
       let start = (this.pageIndex - 1) * this.pageNum;
       let end = this.pageIndex * this.pageNum;
       this.tableData = this.movies.slice(start, end);
-      this.totalItem = 0;
     },
-    ManageComment() {},
-    ManageNews() {},
+    ManageComment() {
+      this.showCommentTable = true;
+      this.showUserTable = false;
+      this.showMovieTable = false;
+      this.tableColumns = [
+        {
+          title: "电影名字",
+          key: "moviename"
+        },
+        {
+          title: "评论内容",
+          key: "content"
+        },
+        {
+          title: "评论状态",
+          key: "check",
+          render: (h, params) => {
+            const row = params.row;
+            const color = row.check ? "primary" : "error";
+            const text = row.check ? "通过" : "封停";
+            return h(
+              "Tag",
+              {
+                props: {
+                  type: "dot",
+                  color: color
+                }
+              },
+              text
+            );
+          }
+        },
+
+        {
+          title: "用户名",
+          key: "username"
+        },
+        {
+          title: "电影评分",
+          key: "movieGrade"
+        },
+        {
+          title: "Action",
+          key: "action",
+          width: 150,
+          align: "center",
+          render: (h, params) => {
+            return h("div", [
+              h(
+                "Button",
+                {
+                  props: {
+                    type: "primary",
+                    size: "small"
+                  },
+                  style: {
+                    marginRight: "5px"
+                  },
+                  on: {
+                    click: () => {
+                      this.showComment(params.index);
+                    }
+                  }
+                },
+                "View"
+              ),
+              h(
+                "Button",
+                {
+                  props: {
+                    type: "error",
+                    size: "small"
+                  },
+                  on: {
+                    click: () => {
+                      this.remove(params.index);
+                    }
+                  }
+                },
+                "Delete"
+              )
+            ]);
+          }
+        }
+      ];
+      if (!this.tableData.length) {
+        this.$http
+          .post("http://localhost:3000/movie/allComment", {
+            id: sessionStorage.getItem("_id")
+          })
+          .then(data => {
+            console.log(data.body.data);
+            if (data.body.status === 0) {
+              data.body.data.forEach(comment => {
+                this.comments.push({
+                  moviename: comment.moviename,
+                  username: comment.username,
+                  content: comment.context,
+                  check: comment.check,
+                  movieGrade: comment.movieGrade
+                });
+              });
+              this.totalItem = this.comments;
+              this.commentTotalNumber = this.comments.length;
+            }
+          });
+      }
+      let start = (this.pageIndex - 1) * this.pageNum;
+      let end = this.pageIndex * this.pageNum;
+      this.tableData = this.comments.slice(start, end);
+    },
     showUser(index) {
       this.$Modal.info({
         title: "User Info",
         content: `${this.tableColumns[0].title}：${this.tableData[index].name}<br><br>${this.tableColumns[2].title}：${this.tableData[index].age}<br><br>${this.tableColumns[3].title}：${this.tableData[index].role}<br><br>${this.tableColumns[4].title}：${this.tableData[index].telephone}<br><br>${this.tableColumns[5].title}：${this.tableData[index].mail}`
+      });
+    },
+    showMovie(index){
+      this.$Modal.info({
+        title: "Movie Info",
+        content: `${this.tableColumns[0].title}：${this.tableData[index].movieName}<br><br>${this.tableColumns[1].title}：${this.tableData[index].movieOriginalTitle}<br><br>${this.tableColumns[2].title}：${this.tableData[index].movieTime}<br><br>${this.tableColumns[3].title}：${this.tableData[index].genres}<br><br>${this.tableColumns[4].title}：${this.tableData[index].movieDirectors}<br><br>${this.tableColumns[5].title}：${this.tableData[index].movieNumSuppose}`
+      });
+    },
+    showComment(index){
+      this.$Modal.info({
+        title: "Movie Info",
+        content: `${this.tableColumns[0].title}：${this.tableData[index].moviename}<br><br>${this.tableColumns[1].title}：${this.tableData[index].content}<br><br>${this.tableColumns[2].title}：${this.tableData[index].check}<br><br>${this.tableColumns[3].title}：${this.tableData[index].username}<br><br>${this.tableColumns[4].title}：${this.tableData[index].movieDirectors}`
       });
     },
     remove(index) {

@@ -9,12 +9,12 @@
       <div class="loginLogo" style="width: 20%;padding-top: 10%">
         <label>LOGIN</label>
       <div>
-        <i-input type="text" v-model="username" placeholder="用户名">
+        <i-input type="text" test-id="loginName" v-model="username" placeholder="用户名">
           <Icon type="ios-person-outline" slot="prepend"></Icon>
         </i-input>
       </div>
       <div class="box">
-        <i-input type="password" v-model="password" placeholder="密码">
+        <i-input type="password"test-id="loginPassword" v-model="password" placeholder="密码">
           <Icon type="ios-lock-outline" slot="prepend"></Icon>
         </i-input>
       </div>
@@ -55,27 +55,41 @@ export default {
   },
   methods: {
     userLogin: function(event) {
-      this.$http
-        .post("http://localhost:3000/users/login", {
-          username: this.username,
-          password: this.$md5(this.password)
-        })
-        .then(data => {
-          if (data.body.status == 1) {
-            this.alertMessage = data.body.message;
-            this.alertShow = true;
-          } else {
-            sessionStorage.setItem("token", data.body.data.token);
-            sessionStorage.setItem("username", data.body.data.user[0].username);
-            sessionStorage.setItem("_id", data.body.data.user[0]._id);
-            sessionStorage.setItem("isAdmin", data.body.data.user[0].userAdmin);
-            if (data.body.data.user[0].userAdmin) {
-              this.$router.push({ path: "/admin" });
+      if (!this.username) {
+        this.alertMessage = "用户名为空";
+        this.alertShow = true;
+      } else if (!this.password) {
+        this.alertMessage = "密码为空";
+        this.alertShow = true;
+      } else {
+        this.$http
+          .post("http://localhost:3000/users/login", {
+            username: this.username,
+            password: this.$md5(this.password)
+          })
+          .then(data => {
+            if (data.body.status == 1) {
+              this.alertMessage = data.body.message;
+              this.alertShow = true;
             } else {
-              this.$router.push({ path: "/" });
+              sessionStorage.setItem("token", data.body.data.token);
+              sessionStorage.setItem(
+                "username",
+                data.body.data.user[0].username
+              );
+              sessionStorage.setItem("_id", data.body.data.user[0]._id);
+              sessionStorage.setItem(
+                "isAdmin",
+                data.body.data.user[0].userAdmin
+              );
+              if (data.body.data.user[0].userAdmin) {
+                this.$router.push({ path: "/admin" });
+              } else {
+                this.$router.push({ path: "/" });
+              }
             }
-          }
-        });
+          });
+      }
     },
 
     userRegister: function(event) {
